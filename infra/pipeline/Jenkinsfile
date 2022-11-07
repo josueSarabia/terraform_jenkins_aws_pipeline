@@ -1,0 +1,65 @@
+pipeline {
+    environment {
+        imageName = "mrbluetoo/simple-web-server:latest"
+        customImage = ''
+    }
+
+    agent any
+    stages {
+
+
+        /* stage('Start Container for Testing') {
+            steps {
+                script {
+                    sh 'cd app'
+                    sh 'docker compose rm -f; docker compose up -d webapp'
+                }
+            }
+        } */
+
+        /* stage('Run Tests') {
+            steps {
+                script {
+                    sh '''
+                        cd app/src
+                        npm install
+                        npm test
+                    '''
+                }
+            }
+            post {
+                success {
+                    script {
+                        sh 'docker compose down'
+                    }
+                }
+                failure {
+                    script {
+                        sh 'docker compose down'
+                    }
+                }
+            }
+        } */
+
+        stage('Build Image') {
+            steps {
+                script {
+                    customImage = docker.build(imageName)
+                }
+            }
+        }
+
+        stage('Push to Registry') {
+            when {
+                branch "main"
+            }
+            steps {
+                script {
+                    docker.withRegistry('', 'DockerhubCredentials') {
+                        customImage.push()
+                    }
+                }
+            }
+        }
+    }
+}

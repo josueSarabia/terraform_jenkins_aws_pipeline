@@ -1,0 +1,6 @@
+services:
+  webapp:
+    build:
+      context: .
+    ports:
+      - "80:8080"
