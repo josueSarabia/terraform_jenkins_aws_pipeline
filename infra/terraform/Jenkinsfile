@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        state('Provision') {
+        stage('Provision') {
             steps {
                 script {
                     if (params.Action == 'plan') {
