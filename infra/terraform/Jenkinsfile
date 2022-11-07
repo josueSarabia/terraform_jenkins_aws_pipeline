@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        state('Provision') {
+            steps {
+                script {
+                    if (params.Action == 'plan') {
+                        sh 'terraform -chdir=infra/terraform/ init'
+                        sh 'terraform -chdir=infra/terraform/ plan'
+                    } else if (params.Action == 'apply') {
+                        sh 'terraform -chdir=infra/terraform/ init'
+                        sh 'terraform -chdir=infra/terraform/ apply --auto-approve'
+                    } else {
+                        sh 'terraform -chdir=infra/terraform/ destroy --auto-approve'
+                    }
+                }
+            }
+        }
+    }
+}
