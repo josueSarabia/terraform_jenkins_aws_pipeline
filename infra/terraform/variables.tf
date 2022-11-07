@@ -3,10 +3,10 @@ variable "region" {
   default = "us-east-1"
 }
 
-/* variable "profile" {
+variable "profile" {
   type    = string
   default = "default"
-} */
+}
 
 variable "cidr_block" {
   default = "10.0.0.0/16"
