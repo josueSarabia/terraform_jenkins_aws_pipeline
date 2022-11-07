@@ -50,9 +50,9 @@ pipeline {
         }
 
         stage('Push to Registry') {
-            when {
+            /* when {
                 branch "main"
-            }
+            } */
             steps {
                 script {
                     docker.withRegistry('', 'DockerhubCredentials') {
