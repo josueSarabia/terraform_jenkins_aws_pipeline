@@ -72,7 +72,7 @@ pipeline {
                                 sshTransfer(
                                     cleanRemote: false,
                                     excludes: '',
-                                    execCommand: 'docker stop $(docker ps -a -q); docker rm $(docker ps -a -q); sudo docker run -p 80:8080 -d mrbluetoo/simple-web-server:latest ;exit 0',
+                                    execCommand: 'docker stop $(docker ps -a -q); docker rm $(docker ps -a -q); docker rmi -f $(docker images -aq); sudo docker run -p 80:8080 -d mrbluetoo/simple-web-server:latest ;exit 0',
                                     execTimeout: 30000,
                                     flatten: false,
                                     makeEmptyDirs: false,
@@ -99,7 +99,7 @@ pipeline {
                                 sshTransfer(
                                     cleanRemote: false,
                                     excludes: '',
-                                    execCommand: 'docker stop $(docker ps -a -q); docker rm $(docker ps -a -q); sudo docker run -p 80:8080 -d mrbluetoo/simple-web-server:latest ;exit 0',
+                                    execCommand: 'docker stop $(docker ps -a -q); docker rm $(docker ps -a -q); docker rmi -f $(docker images -aq); sudo docker run -p 80:8080 -d mrbluetoo/simple-web-server:latest ;exit 0',
                                     execTimeout: 30000,
                                     flatten: false,
                                     makeEmptyDirs: false,
