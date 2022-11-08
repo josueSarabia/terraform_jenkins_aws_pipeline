@@ -61,5 +61,29 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    sh """
+                    #!/bin/bash
+                    sudo ssh ubuntu@52.203.112.163 << EOF
+                    sudo docker run -p 8080:80 mrbluetoo/simple-web-server:latest
+                    exit 0
+                    << EOF
+                    """
+                }
+
+                script {
+                    sh """
+                    #!/bin/bash
+                    sudo ssh ubuntu@3.208.71.131 << EOF
+                    sudo docker run -p 80:8080 mrbluetoo/simple-web-server:latest
+                    exit 0
+                    << EOF
+                    """
+                }
+            }
+        }
     }
 }
