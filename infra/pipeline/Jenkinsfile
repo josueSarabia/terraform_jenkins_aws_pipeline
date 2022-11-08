@@ -68,7 +68,7 @@ pipeline {
                     sh """
                     #!/bin/bash
                     whoami
-                    sudo ssh -i /var/lib/jenkins/.ssh/id_rsa ubuntu@52.203.112.163 << EOF
+                    ssh -i /var/lib/jenkins/.ssh/id_rsa ubuntu@52.203.112.163 << EOF
                     sudo docker run -p 8080:80 mrbluetoo/simple-web-server:latest
                     exit 0
                     << EOF
@@ -79,7 +79,7 @@ pipeline {
                     sh """
                     #!/bin/bash
                     whoami
-                    sudo ssh -i /var/lib/jenkins/.ssh/id_rsa ubuntu@3.208.71.131 << EOF
+                    ssh -i /var/lib/jenkins/.ssh/id_rsa ubuntu@3.208.71.131 << EOF
                     sudo docker run -p 80:8080 mrbluetoo/simple-web-server:latest
                     exit 0
                     << EOF
