@@ -72,7 +72,7 @@ pipeline {
                                 sshTransfer(
                                     cleanRemote: false,
                                     excludes: '',
-                                    execCommand: 'sudo docker run -p 80:8080 mrbluetoo/simple-web-server:latest ;exit 0',
+                                    execCommand: 'docker stop $(docker ps -a -q); docker rm $(docker ps -a -q); sudo docker run -p 80:8080 mrbluetoo/simple-web-server:latest ;exit 0',
                                     execTimeout: 600000,
                                     flatten: false,
                                     makeEmptyDirs: false,
@@ -87,14 +87,19 @@ pipeline {
                             usePromotionTimestamp: false,
                             useWorkspaceInPromotion: false,
                             verbose: false
-                        ), 
+                        ),
+                    ]
+                )
+
+                sshPublisher(
+                    publishers: [
                         sshPublisherDesc(
                             configName: 'Ec2_instance_2',
                             transfers: [
                                 sshTransfer(
                                     cleanRemote: false,
                                     excludes: '',
-                                    execCommand: 'sudo docker run -p 80:8080 mrbluetoo/simple-web-server:latest ;exit 0',
+                                    execCommand: 'docker stop $(docker ps -a -q); docker rm $(docker ps -a -q); sudo docker run -p 80:8080 mrbluetoo/simple-web-server:latest ;exit 0',
                                     execTimeout: 600000,
                                     flatten: false,
                                     makeEmptyDirs: false,
