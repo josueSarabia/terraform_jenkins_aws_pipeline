@@ -95,6 +95,7 @@ resource "aws_instance" "web_server" {
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   sudo apt-get update
   sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  sudo usermod -aG docker ubuntu
   EOF
 
 
