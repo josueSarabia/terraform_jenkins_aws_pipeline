@@ -78,6 +78,7 @@ resource "aws_instance" "web_server" {
   subnet_id              = aws_subnet.public[count.index].id
   vpc_security_group_ids = [aws_security_group.ec2_sg_public_subnet.id]
   associate_public_ip_address = true
+  key_name = "devops"
 
   user_data = <<-EOF
   #!/bin/bash
