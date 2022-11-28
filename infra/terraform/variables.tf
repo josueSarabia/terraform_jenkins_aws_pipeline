@@ -8,7 +8,13 @@ variable "profile" {
   default = "default"
 }
 
+variable "environment" {
+  default = "dev"
+  #default = "jenkins"
+}
+
 variable "cidr_block" {
+  type = string
   default = "10.0.0.0/16"
 }
 
@@ -17,24 +23,11 @@ variable "public_subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
-variable "environment" {
-  default = "dev"
-}
-variable "instance_type" {
-  type    = string
-  default = "t2.micro"
-}
-
-variable "allowed_ports" {
-  type        = list(any)
-  default     = ["80", "443"]
-}
-
-variable "app_name" {
+variable "application_name" {
   type        = string
   default     = "SimpleWebPage"
 }
 
-variable "app_port" {
-  default = 80
-}
+/* variable "my_ip" {
+  default = ""
+} */
