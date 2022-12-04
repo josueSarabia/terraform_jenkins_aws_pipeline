@@ -158,10 +158,13 @@ resource "aws_instance" "jenkins_server" {
    tar -xf $USER_HOME/$VOLUME_NAME.tar.gz -C $USER_HOME/
    sudo chown -R ubuntu:ubuntu $USER_HOME/$VOLUME_NAME
 
-   docker run -d -v $USER_HOME/$VOLUME_NAME/:/var/jenkins_home -p 8080:8080 \
+   docker run -d \
+      -p 8080:8080 \
+      -v $USER_HOME/$VOLUME_NAME/:/var/jenkins_home  \
       -v /bin/terraform:/bin/terraform \
       -v $USER_HOME/.aws/:/var/jenkins_home/.aws \
-      --restart=on-failure jenkins/jenkins:lts-jdk11
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      jenkins/jenkins:lts-jdk11
   EOF
 
   # Setting the Name tag to jenkins_server
