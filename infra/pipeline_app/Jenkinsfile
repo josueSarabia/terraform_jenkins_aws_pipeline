@@ -8,23 +8,20 @@ pipeline {
     stages {
 
 
-        /* stage('Start Container for Testing') {
+        stage('Start Container for Testing') {
             steps {
                 script {
                     sh 'cd app'
-                    sh 'docker compose rm -f; docker compose up -d webapp'
+                    sh 'docker compose rm -f'
+                    sh 'docker compose up -d webapp'
                 }
             }
-        } */
+        }
 
-        /* stage('Run Tests') {
+        stage('Run Tests') {
             steps {
                 script {
-                    sh '''
-                        cd app/src
-                        npm install
-                        npm test
-                    '''
+                    sh 'docker exec webapp npm run test'
                 }
             }
             post {
@@ -39,9 +36,9 @@ pipeline {
                     }
                 }
             }
-        } */
+        }
 
-        stage('Build Image') {
+        /* stage('Build Image') {
             steps {
                 script {
                     customImage = docker.build(imageName, "./app/")
@@ -50,9 +47,9 @@ pipeline {
         }
 
         stage('Push to Registry') {
-            /* when {
-                branch "main"
-            } */
+            // when {
+            //    branch "main"
+            // }
             steps {
                 script {
                     docker.withRegistry('', 'DockerhubCredentials') {
@@ -60,9 +57,9 @@ pipeline {
                     }
                 }
             }
-        }
+        } */
 
-        stage('Deploy') {
+        /* stage('Deploy') {
             steps {
                 sshPublisher(
                     publishers: [
@@ -117,6 +114,6 @@ pipeline {
                     ]
                 )
             }
-        }
+        } */
     }
 }

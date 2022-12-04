@@ -1,21 +1,4 @@
-resource "aws_security_group" "dummy_sg" {
-  name = "dummy sg"
-
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "dummy_sg"
-  }
-}
-
-
-/* module "networking" {
+module "networking" {
   source = "./modules/networking"
   cidr_block = var.cidr_block
   public_subnets = var.public_subnets
@@ -26,7 +9,7 @@ module "s3" {
   # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/s3"
   s3_bucket_name = "artifacts-demo-bucket"
-} */
+}
 
 /* module "security_groups" {
   # count = var.environment != "jenkins" ? 1 : 0
@@ -77,11 +60,11 @@ module "app_load_balancer" {
   web_servers_info = module.compute.web_servers_info
 } */
 
-/* module "jenkins" {
+module "jenkins" {
   # count = var.environment == "jenkins" ? 1 : 0
   source = "./modules/jenkins"
   vpc_id = module.networking.vpc_id
   subnet_id =  module.networking.public_subnets_info[0].id
   bucket_name = module.s3.artifacts_s3_bucket_name
   my_ip = var.my_ip
-} */
+}

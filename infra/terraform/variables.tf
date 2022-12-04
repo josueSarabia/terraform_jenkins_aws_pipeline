@@ -29,5 +29,5 @@ variable "application_name" {
 }
 
 variable "my_ip" {
-  default = ""
+  # default = ""
 }
