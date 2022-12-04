@@ -1,0 +1,10 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk11
+    restart: on-failure
+    ports:
+      - 8080:8080
+    volumes:
+      - "./jenkins-volume:/var/jenkins_home"
+      - "/bin/terraform:/bin/terraform"
+      - "~/.aws:/var/jenkins_home/.aws"

@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "artifacts_bucket" {
-  bucket = "demo-artf-webapp"
+  bucket = var.s3_bucket_name
 }
 
 # Set the ACL of the S3 bucket to private

@@ -103,13 +103,65 @@ resource "aws_instance" "jenkins_server" {
   
   # Setting the user data to the bash file called install_jenkins.sh
   user_data = <<-EOF
-    #!/bin/bash
-    wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
-    sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
-    sudo apt update && sudo apt upgrade -y
-    sudo apt install jenkins -y
-    sudo systemctl start jenkins
+   #!/bin/bash
 
+   USER_HOME="/home/ubuntu"
+   VOLUME_NAME="jenkins-volume"
+
+   sudo apt-get update
+   sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install \
+      ca-certificates \
+      curl \
+      gnupg \
+      lsb-release
+   sudo mkdir -p /etc/apt/keyrings
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+   echo \
+   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   sudo apt-get update
+   sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+   sudo usermod -aG docker ubuntu
+
+   sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+   wget -O- https://apt.releases.hashicorp.com/gpg | \
+    gpg --dearmor | \
+    sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+   gpg --no-default-keyring \
+    --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+    --fingerprint
+   echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+    sudo tee /etc/apt/sources.list.d/hashicorp.list
+   sudo apt update
+   sudo apt-get install terraform
+
+   cd $USER_HOME
+
+   apt install unzip
+
+   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   unzip awscliv2.zip
+   sudo ./aws/install
+
+   export AWS_ACCESS_KEY_ID=${aws_iam_access_key.jenkins_user_key.id}
+   export AWS_SECRET_ACCESS_KEY=${aws_iam_access_key.jenkins_user_key.secret}
+   export AWS_CONFIG_FILE=$USER_HOME/.aws/config
+   export AWS_SHARED_CREDENTIALS_FILE=$USER_HOME/.aws/credentials
+   aws configure set default.region us-east-1
+   aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile jenkins
+   aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile jenkins
+
+   sudo chown -R ubuntu:ubuntu $USER_HOME/.aws/
+
+   aws s3 cp s3://${var.bucket_name}/$VOLUME_NAME.tar.gz $USER_HOME/$VOLUME_NAME.tar.gz --profile jenkins
+   tar -xf $USER_HOME/$VOLUME_NAME.tar.gz -C $USER_HOME/
+   sudo chown -R ubuntu:ubuntu $USER_HOME/$VOLUME_NAME
+
+   docker run -d -v $USER_HOME/$VOLUME_NAME/:/var/jenkins_home -p 8080:8080 \
+      -v /bin/terraform:/bin/terraform \
+      -v $USER_HOME/.aws/:/var/jenkins_home/.aws \
+      --restart=on-failure jenkins/jenkins:lts-jdk11
   EOF
 
   # Setting the Name tag to jenkins_server

@@ -1,18 +1,39 @@
+resource "aws_security_group" "dummy_sg" {
+  name = "dummy sg"
 
 
-module "networking" {
-   source = "./modules/networking"
-   cidr_block = var.cidr_block
-   public_subnets = var.public_subnets
-   environment = var.environment
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "dummy_sg"
+  }
 }
 
-module "security_groups" {
-   # count = var.environment != "jenkins" ? 1 : 0
-   source = "./modules/security_groups"
-   vpc_id = module.networking.vpc_id
-   allowed_ports = ["80", "443"]
-   environment = var.environment 
+
+/* module "networking" {
+  source = "./modules/networking"
+  cidr_block = var.cidr_block
+  public_subnets = var.public_subnets
+  environment = var.environment
+}
+
+module "s3" {
+  # count = var.environment != "jenkins" ? 1 : 0
+  source = "./modules/s3"
+  s3_bucket_name = "artifacts-demo-bucket"
+} */
+
+/* module "security_groups" {
+  # count = var.environment != "jenkins" ? 1 : 0
+  source = "./modules/security_groups"
+  vpc_id = module.networking.vpc_id
+  allowed_ports = ["80", "443"]
+  environment = var.environment 
 }
 
 module "compute" {
@@ -44,12 +65,6 @@ module "codedeploy" {
 
 }
 
-module "s3" {
-  # count = var.environment != "jenkins" ? 1 : 0
-  source = "./modules/s3"
-  s3_bucket_name = "artifacts-demo-bucket"
-}
-
 module "app_load_balancer" {
   # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/app_load_balancer"
@@ -60,12 +75,13 @@ module "app_load_balancer" {
   load_balancer_sg = [module.security_groups.app_lb_sg_id]
   vpc_id = module.networking.vpc_id
   web_servers_info = module.compute.web_servers_info
-}
+} */
 
 /* module "jenkins" {
-    # count = var.environment == "jenkins" ? 1 : 0
-    source = "./modules/jenkins"
-    vpc_id = module.networking.vpc_id
-    subnet_id =  module.networking.public_subnets_info[0].id
-    my_ip = var.my_ip
+  # count = var.environment == "jenkins" ? 1 : 0
+  source = "./modules/jenkins"
+  vpc_id = module.networking.vpc_id
+  subnet_id =  module.networking.public_subnets_info[0].id
+  bucket_name = module.s3.artifacts_s3_bucket_name
+  my_ip = var.my_ip
 } */

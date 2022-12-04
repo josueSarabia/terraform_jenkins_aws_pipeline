@@ -2,13 +2,26 @@ pipeline {
     agent any
 
     stages {
-        stage('Provision') {
+        stage('Init') {
             steps {
                 script {
                     sh 'terraform -chdir=infra/terraform/ init'
-                    if (params.Action == 'plan') {
-                        sh 'terraform -chdir=infra/terraform/ plan'
-                    } else if (params.Action == 'apply') {
+                }
+            }
+        }
+
+        stage('Plan') {
+            steps {
+                script {
+                    sh 'terraform -chdir=infra/terraform/ plan'
+                }
+            }
+        }
+
+        stage('Apply/Destroy') {
+            steps {
+                script {
+                    if (params.Action == 'apply') {
                         sh 'terraform -chdir=infra/terraform/ apply --auto-approve'
                     } else {
                         sh 'terraform -chdir=infra/terraform/ destroy --auto-approve'
