@@ -3,6 +3,7 @@ services:
     image: jenkins/jenkins:lts-jdk11
     restart: on-failure
     privileged: true
+    user: root
     ports:
       - 8080:8080
     volumes:
@@ -10,3 +11,7 @@ services:
       - "/bin/terraform:/bin/terraform"
       - "~/.aws:/var/jenkins_home/.aws"
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/usr/bin/docker:/usr/bin/docker"
+      - "/usr/bin/com.docker.cli:/usr/bin/com.docker.cli"
+      - "/usr/bin/docker-compose:/usr/bin/docker-compose"
+      - "/usr/bin/docker-compose-v1:/usr/bin/docker-compose-v1"
