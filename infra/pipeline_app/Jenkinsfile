@@ -41,19 +41,21 @@ pipeline {
         stage ('Push revision') {
             steps {
                 script {
-                    sh 'aws deploy push \
+                    sh 'docker run --rm -v ~/.aws:/root/.aws \
+                            -v ./infra/terraform/codedeploy_scripts/:/infra/terraform/codedeploy_scripts/ \
+                            amazon/aws-cli aws deploy push \
                             --application-name SimpleWebPage \
                             --description "This is a revision for the application SimpleWebPage" \
                             --ignore-hidden-files \
                             --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
-                            --source ./infra/terraform/codedeploy_scripts/ \
+                            --source /infra/terraform/codedeploy_scripts/ \
                             --profile jenkins '
                 }
             }
             
         }
 
-        stage('Build Image') {
+        /* stage('Build Image') {
             steps {
                 script {
                     customImage = docker.build(imageName, "./app/")
@@ -80,6 +82,6 @@ pipeline {
                     sh 'aws deploy create-deployment --application-name SimpleWebPage --deployment-group-name SimpleWebPage_deployment_group --s3-location bucket=artifacts-demo-bucket,key=codedeploy_scripts.zip,bundleType=zip --profile jenkins'
                 }
             }
-        }
+        } */
     }
 }
