@@ -61,7 +61,7 @@ module "app_load_balancer" {
 }
 
 module "jenkins" {
-  # count = var.environment == "jenkins" ? 1 : 0
+  count = var.environment == "jenkins" ? 1 : 0
   source = "./modules/jenkins"
   vpc_id = module.networking.vpc_id
   subnet_id =  module.networking.public_subnets_info[0].id
