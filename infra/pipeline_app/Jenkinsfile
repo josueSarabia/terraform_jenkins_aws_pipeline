@@ -77,11 +77,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh 'aws deploy create-deployment \
-                            --application-name SimpleWebPage \ 
-                            --deployment-group-name SimpleWebPage_deployment_group \ 
-                            --s3-location bucket=artifacts-demo-bucket,key=codedeploy_scripts.zip,bundleType=zip \
-                            --profile jenkins'
+                    sh 'aws deploy create-deployment --application-name SimpleWebPage --deployment-group-name SimpleWebPage_deployment_group --s3-location bucket=artifacts-demo-bucket,key=codedeploy_scripts.zip,bundleType=zip --profile jenkins'
                 }
             }
         }
