@@ -28,6 +28,6 @@ variable "application_name" {
   default     = "SimpleWebPage"
 }
 
-/* variable "my_ip" {
-  default = ""
-} */
+variable "my_ip" {
+  default = "190.84.119.238"
+}
