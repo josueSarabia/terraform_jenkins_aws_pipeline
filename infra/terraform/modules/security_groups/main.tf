@@ -37,6 +37,14 @@ resource "aws_security_group" "ec2_sg_public_subnet" {
     }
   }
 
+  ingress {
+      description = "Allow SSH from my computer"
+      from_port = "22"
+      to_port = "22"
+      protocol = "tcp"
+      cidr_blocks = ["${var.my_ip}/32"]
+   }
+
   egress {
     from_port   = 0
     to_port     = 0

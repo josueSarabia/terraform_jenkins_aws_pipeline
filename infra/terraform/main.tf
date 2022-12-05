@@ -17,6 +17,7 @@ module "security_groups" {
   vpc_id = module.networking.vpc_id
   allowed_ports = ["80", "443"]
   environment = var.environment 
+  my_ip = var.my_ip
 }
 
 module "compute" {

@@ -164,6 +164,7 @@ resource "aws_instance" "jenkins_server" {
       -v /bin/terraform:/bin/terraform \
       -v $USER_HOME/.aws/:/var/jenkins_home/.aws \
       -v /var/run/docker.sock:/var/run/docker.sock \
+      -v /usr/local/bin/aws:/usr/local/bin/aws \
       jenkins/jenkins:lts-jdk11
   EOF
 
