@@ -41,7 +41,7 @@ pipeline {
         stage ('Push revision') {
             steps {
                 script {
-                    sh '''
+                    sh '
                         aws deploy push \
                             --application-name SimpleWebPage \
                             --description "This is a revision for the application SimpleWebPage" \
@@ -49,7 +49,7 @@ pipeline {
                             --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
                             --source ./infra/terraform/codedeploy_scripts/
                             --profile jenkins
-                    '''
+                    '
                 }
             }
             
@@ -79,13 +79,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh '''
+                    sh '
                         aws deploy create-deployment \
                             --application-name SimpleWebPage \ 
                             --deployment-group-name SimpleWebPage_deployment_group \ 
                             --s3-location bucket=artifacts-demo-bucket,key=codedeploy_scripts.zip,bundleType=zip
                             --profile jenkins
-                    '''
+                    '
                 }
             }
         }
