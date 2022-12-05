@@ -1,0 +1,19 @@
+version: 0.0
+
+os: linux
+
+
+files:
+  - source: /
+    destination: /home/ubuntu/
+    overwrite: true
+file_exists_behavior: OVERWRITE
+
+
+hooks:
+  BeforeInstall:
+    - location: stop_old_container.sh
+      runas: ubuntu
+  ApplicationStart:
+    - location: start_container.sh
+      runas: ubuntu

@@ -11,7 +11,7 @@ module "s3" {
   s3_bucket_name = "artifacts-demo-bucket"
 }
 
-/* module "security_groups" {
+module "security_groups" {
   # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/security_groups"
   vpc_id = module.networking.vpc_id
@@ -58,13 +58,13 @@ module "app_load_balancer" {
   load_balancer_sg = [module.security_groups.app_lb_sg_id]
   vpc_id = module.networking.vpc_id
   web_servers_info = module.compute.web_servers_info
-} */
+}
 
-module "jenkins" {
+/* module "jenkins" {
   # count = var.environment == "jenkins" ? 1 : 0
   source = "./modules/jenkins"
   vpc_id = module.networking.vpc_id
   subnet_id =  module.networking.public_subnets_info[0].id
   bucket_name = module.s3.artifacts_s3_bucket_name
   my_ip = var.my_ip
-}
+} */
