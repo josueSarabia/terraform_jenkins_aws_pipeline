@@ -42,7 +42,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker run --rm -v ~/.aws:/root/.aws \
-                            -v ./infra/terraform/codedeploy_scripts/:/infra/terraform/codedeploy_scripts/ \
+                            -v $(pwd)/../terraform/codedeploy_scripts/:/infra/terraform/codedeploy_scripts/ \
                             amazon/aws-cli aws deploy push \
                             --application-name SimpleWebPage \
                             --description "This is a revision for the application SimpleWebPage" \
