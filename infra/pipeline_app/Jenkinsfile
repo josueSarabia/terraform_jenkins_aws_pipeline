@@ -43,7 +43,7 @@ pipeline {
                 script {
                     sh 'docker run --rm -v ~/.aws:/root/.aws \
                             -v $(pwd)/../terraform/codedeploy_scripts/:/infra/terraform/codedeploy_scripts/ \
-                            amazon/aws-cli aws deploy push \
+                            amazon/aws-cli deploy push \
                             --application-name SimpleWebPage \
                             --description "This is a revision for the application SimpleWebPage" \
                             --ignore-hidden-files \
