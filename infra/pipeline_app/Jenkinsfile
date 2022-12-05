@@ -41,7 +41,7 @@ pipeline {
         stage ('Push revision') {
             steps {
                 script {
-                    sh 'docker run --rm -v /var/jenkins_home/.aws/:/root/.aws \
+                    sh 'docker run --rm -v ~/.aws/:/root/.aws \
                             -v $(pwd)/../terraform/codedeploy_scripts/:/infra/terraform/codedeploy_scripts/ \
                             amazon/aws-cli deploy push \
                             --application-name SimpleWebPage \
