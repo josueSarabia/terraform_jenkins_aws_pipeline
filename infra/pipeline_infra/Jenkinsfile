@@ -13,7 +13,7 @@ pipeline {
         stage('Plan') {
             steps {
                 script {
-                    sh 'terraform -chdir=infra/terraform/ plan'
+                    sh 'bash ./infra/terraform/scripts/set_up_app_infra.sh plan'
                 }
             }
         }
@@ -22,9 +22,9 @@ pipeline {
             steps {
                 script {
                     if (params.Action == 'apply') {
-                        sh 'terraform -chdir=infra/terraform/ apply --auto-approve'
+                        sh 'bash ./infra/terraform/scripts/set_up_app_infra.sh apply'
                     } else {
-                        sh 'terraform -chdir=infra/terraform/ destroy --auto-approve'
+                        sh 'bash ./infra/terraform/scripts/set_up_app_infra.sh destroy'
                     }
                 }
             }

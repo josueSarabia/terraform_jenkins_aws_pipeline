@@ -14,6 +14,7 @@ data "aws_iam_policy_document" "ec2_code_deploy_policy" {
 }
 
 resource "aws_iam_role" "ec2_code_deploy_instance_role" {
+  name = "ec2_code_deploy_instance_role_demo"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -40,7 +41,7 @@ resource "aws_iam_instance_profile" "ec2_code_deploy_instance_profile" {
 }
 
 resource "aws_iam_role" "aws_codedeploy_role" {
-  name = "example-role"
+  name = "codedeploy_role_demo"
 
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
