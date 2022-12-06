@@ -13,7 +13,7 @@ pipeline {
                 script {
                     sh 'cd app'
                     sh '$(pwd)'
-                    sd 'ls -la'
+                    sd 'sudo ls -la'
                     sh 'docker compose rm -f'
                     sh 'docker compose up -d webapp'
                 }
