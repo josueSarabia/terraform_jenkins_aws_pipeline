@@ -11,8 +11,7 @@ pipeline {
         stage('Start Container for Testing') {
             steps {
                 script {
-                    sh 'cd app'
-                    sh 'docker compose -f ./app/docker-compose.yml app/ rm -f || true'
+                    sh 'docker compose -f ./app/docker-compose.yml rm -f'
                     sh 'docker compose -f ./app/docker-compose.yml up -d webapp'
                 }
             }
@@ -27,12 +26,12 @@ pipeline {
             post {
                 success {
                     script {
-                        sh 'docker compose down'
+                        sh 'docker compose -f ./app/docker-compose.yml down'
                     }
                 }
                 failure {
                     script {
-                        sh 'docker compose down'
+                        sh 'docker compose -f ./app/docker-compose.yml down'
                     }
                 }
             }
