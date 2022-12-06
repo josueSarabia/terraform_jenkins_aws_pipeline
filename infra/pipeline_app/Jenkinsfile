@@ -4,11 +4,11 @@ pipeline {
         customImage = ''
     }
 
-    agent any
+    agent { label "jenkins-worker"}
     stages {
 
 
-        /* stage('Start Container for Testing') {
+        stage('Start Container for Testing') {
             steps {
                 script {
                     sh 'cd app'
@@ -36,23 +36,21 @@ pipeline {
                     }
                 }
             }
-        } */
+        }
 
         stage ('Push revision') {
             steps {
                 script {
-                    sh 'docker run --rm -v ~/.aws/:/root/.aws \
-                            -v $(pwd)/../terraform/codedeploy_scripts/:/infra/terraform/codedeploy_scripts/ \
-                            amazon/aws-cli deploy push \
+                    /* sh 'aws deploy push \
                             --application-name SimpleWebPage \
                             --description "This is a revision for the application SimpleWebPage" \
                             --ignore-hidden-files \
                             --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
                             --source /infra/terraform/codedeploy_scripts/ \
-                            --profile jenkins '
+                            --profile jenkins ' */
+                    sh 'aws s3api list-objects --bucket artifacts-demo-bucket --profile jenkins'
                 }
             }
-            
         }
 
         /* stage('Build Image') {

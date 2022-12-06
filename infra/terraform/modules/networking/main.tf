@@ -11,7 +11,6 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "public" {
-  # count = var.environment != "jenkins" ? length(var.public_subnets) : 1
   count = length(var.public_subnets)
   cidr_block = tolist(var.public_subnets)[count.index]
   vpc_id = aws_vpc.main.id
@@ -52,7 +51,6 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  # count = var.environment != "jenkins" ? length(var.public_subnets) : 1
   count = length(var.public_subnets)
   route_table_id = aws_route_table.public.id
   subnet_id      = aws_subnet.public[count.index].id

@@ -6,13 +6,11 @@ module "networking" {
 }
 
 module "s3" {
-  # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/s3"
   s3_bucket_name = "artifacts-demo-bucket"
 }
 
 module "security_groups" {
-  # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/security_groups"
   vpc_id = module.networking.vpc_id
   allowed_ports = ["80", "443"]
@@ -21,7 +19,6 @@ module "security_groups" {
 }
 
 module "compute" {
-  # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/compute"
   region = var.region
   web_instance_profile = module.iam.ec2_instance_profile
@@ -32,14 +29,12 @@ module "compute" {
 }
 
 module "iam" {
-  # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/iam"
   s3_bucket_name = module.s3.artifacts_s3_bucket_name
   region = var.region
 }
   
 module "codedeploy" {
-  # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/codedeploy" 
   environment = var.environment
   application_name = var.application_name
@@ -50,7 +45,6 @@ module "codedeploy" {
 }
 
 module "app_load_balancer" {
-  # count = var.environment != "jenkins" ? 1 : 0
   source = "./modules/app_load_balancer"
   environment = var.environment
   application_name = var.application_name
@@ -62,7 +56,6 @@ module "app_load_balancer" {
 }
 
 module "jenkins" {
-  # count = var.environment == "jenkins" ? 1 : 0
   source = "./modules/jenkins"
   vpc_id = module.networking.vpc_id
   subnet_id =  module.networking.public_subnets_info[0].id

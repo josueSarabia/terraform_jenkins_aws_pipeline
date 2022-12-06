@@ -10,7 +10,6 @@ variable "profile" {
 
 variable "environment" {
   default = "dev"
-  #default = "jenkins"
 }
 
 variable "cidr_block" {
