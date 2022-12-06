@@ -236,8 +236,8 @@ resource "aws_instance" "jenkins_worker_server" {
 
    sudo chown -R ubuntu:ubuntu $USER_HOME/.aws/
 
-   apt update
-   apt install openjdk-11-jre
+   sudo apt update -y
+   sudo apt install openjdk-11-jre -y
   EOF
 
   tags = {

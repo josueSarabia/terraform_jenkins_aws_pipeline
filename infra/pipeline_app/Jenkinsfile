@@ -12,6 +12,7 @@ pipeline {
             steps {
                 script {
                     sh 'cd app'
+                    sd 'ls -la'
                     sh 'docker compose rm -f'
                     sh 'docker compose up -d webapp'
                 }
