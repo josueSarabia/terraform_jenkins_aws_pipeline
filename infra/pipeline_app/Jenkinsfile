@@ -12,7 +12,8 @@ pipeline {
             steps {
                 script {
                     sh 'cd app'
-                    sh 'docker compose up -d webapp'
+                    sh 'docker compose -f ./app/docker-compose.yml app/ rm -f || true'
+                    sh 'docker compose -f ./app/docker-compose.yml up -d webapp'
                 }
             }
         }
