@@ -45,7 +45,7 @@ pipeline {
                             --description "This is a revision for the application SimpleWebPage" \
                             --ignore-hidden-files \
                             --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
-                            --source /infra/terraform/codedeploy_scripts/ \
+                            --source ./infra/terraform/codedeploy_scripts/ \
                             --profile jenkins '
                 }
             }
