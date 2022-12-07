@@ -84,7 +84,7 @@ resource "aws_security_group" "jenkins_worker_server_sg" {
       from_port = "22"
       to_port = "22"
       protocol = "tcp"
-      cidr_blocks = ["${aws_instance.jenkins_worker_server.public_ip}/32"]
+      cidr_blocks = ["${aws_instance.jenkins_server.public_ip}/32"]
       # security_groups = [ aws_security_group.jenkins_server_sg.id ]
    }
 
