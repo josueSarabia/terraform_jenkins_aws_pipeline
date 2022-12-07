@@ -84,7 +84,8 @@ resource "aws_security_group" "jenkins_worker_server_sg" {
       from_port = "22"
       to_port = "22"
       protocol = "tcp"
-      security_groups = [ aws_security_group.jenkins_server_sg.id ]
+      cidr_blocks = ["${aws_instance.jenkins_worker_server.public_ip}/32"]
+      # security_groups = [ aws_security_group.jenkins_server_sg.id ]
    }
 
    egress {
@@ -136,18 +137,6 @@ resource "aws_instance" "jenkins_server" {
    sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install docker-ce docker-ce-cli containerd.io docker-compose-plugin
    sudo usermod -aG docker ubuntu
 
-   sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
-   wget -O- https://apt.releases.hashicorp.com/gpg | \
-    gpg --dearmor | \
-    sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-   gpg --no-default-keyring \
-    --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-    --fingerprint
-   echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
-    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-    sudo tee /etc/apt/sources.list.d/hashicorp.list
-   sudo apt update
-   sudo apt-get install terraform
 
    cd $USER_HOME
 
@@ -174,8 +163,6 @@ resource "aws_instance" "jenkins_server" {
    docker run -d \
       -p 8080:8080 \
       -v $USER_HOME/$VOLUME_NAME/:/var/jenkins_home  \
-      -v /bin/terraform:/bin/terraform \
-      -v $USER_HOME/.aws/:/var/jenkins_home/.aws \
       jenkins/jenkins:lts-jdk11
   EOF
    
@@ -217,6 +204,19 @@ resource "aws_instance" "jenkins_worker_server" {
    sudo apt-get update
    sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install docker-ce docker-ce-cli containerd.io docker-compose-plugin
    sudo usermod -aG docker ubuntu
+
+   sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+   wget -O- https://apt.releases.hashicorp.com/gpg | \
+    gpg --dearmor | \
+    sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+   gpg --no-default-keyring \
+    --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+    --fingerprint
+   echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+    sudo tee /etc/apt/sources.list.d/hashicorp.list
+   sudo apt update
+   sudo apt-get install terraform
 
    cd $USER_HOME
 
