@@ -55,6 +55,11 @@ module "app_load_balancer" {
   web_servers_info = module.compute.web_servers_info
 }
 
+module "ecr" {
+  source = "./modules/ecr"
+  repository_name = "${var.application_name}_repo"
+}
+
 module "jenkins" {
   source = "./modules/jenkins"
   vpc_id = module.networking.vpc_id

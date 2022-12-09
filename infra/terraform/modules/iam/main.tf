@@ -13,6 +13,10 @@ data "aws_iam_policy_document" "ec2_code_deploy_policy" {
    }
 }
 
+data "aws_iam_policy" "aws_ecr_policy" {
+  name = "AmazonEC2ContainerRegistryReadOnly"
+}
+
 resource "aws_iam_role" "ec2_code_deploy_instance_role" {
   name = "ec2_code_deploy_instance_role_demo"
   assume_role_policy = jsonencode({
@@ -33,6 +37,11 @@ resource "aws_iam_role" "ec2_code_deploy_instance_role" {
     name = "EC2CodeDeployPolicy"
     policy = data.aws_iam_policy_document.ec2_code_deploy_policy.json
   }
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_ecr_role_policy_attachment" {
+  role       = aws_iam_role.ec2_code_deploy_instance_role.name
+  policy_arn = data.aws_iam_policy.aws_ecr_policy.arn
 }
 
 resource "aws_iam_instance_profile" "ec2_code_deploy_instance_profile" {
