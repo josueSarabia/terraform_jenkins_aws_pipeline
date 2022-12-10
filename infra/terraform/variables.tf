@@ -24,7 +24,7 @@ variable "public_subnets" {
 
 variable "application_name" {
   type        = string
-  default     = "simple_web"
+  default     = "simple-web"
 }
 
 variable "my_ip" {
