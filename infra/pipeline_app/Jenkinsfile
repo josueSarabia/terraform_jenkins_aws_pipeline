@@ -71,7 +71,7 @@ pipeline {
                     /* docker.withRegistry('', 'DockerhubCredentials') {
                         customImage.push()
                     } */
-                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL"
+                    sh "aws ecr get-login-password --region us-east-1 --profile jenkins | docker login --username AWS --password-stdin $ECR_REPO_URL"
                     sh "docker push $ECR_REPO_URL/$imageName:${GIT_COMMIT}"
                     sh "docker rmi $ECR_REPO_URL/$imageName:${GIT_COMMIT}"
                 }
