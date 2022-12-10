@@ -40,7 +40,7 @@ pipeline {
         stage ('Push revision') {
             steps {
                 script {
-                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL $ECR_REPO_URL ./infra/terraform/codedeploy_scripts/start_container.sh"
+                    sh 'bash ./infra/terraform/scripts/replace_string.sh REPO_URL $ECR_REPO_URL ./infra/terraform/codedeploy_scripts/start_container.sh'
                     sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
                     sh 'cat ./infra/terraform/codedeploy_scripts/start_container.sh'
                     /* sh 'aws deploy push \
@@ -58,7 +58,7 @@ pipeline {
             steps {
                 script {
                     // customImage = docker.build(imageName, "./app/")
-                    sh "docker build -t $ECR_REPO_URL/$imageName:${GIT_COMMIT} ./app/"
+                    sh "docker build -t '$ECR_REPO_URL'/${imageName}:${GIT_COMMIT} ./app/"
                 }
             }
         }
@@ -72,9 +72,9 @@ pipeline {
                     /* docker.withRegistry('', 'DockerhubCredentials') {
                         customImage.push()
                     } */
-                    sh "aws ecr get-login-password --region us-east-1 --profile jenkins | docker login --username AWS --password-stdin $ECR_REPO_URL"
-                    sh "docker push $ECR_REPO_URL/$imageName:${GIT_COMMIT}"
-                    sh "docker rmi $ECR_REPO_URL/$imageName:${GIT_COMMIT}"
+                    sh 'aws ecr get-login-password --region us-east-1 --profile jenkins | docker login --username AWS --password-stdin $ECR_REPO_URL'
+                    sh "docker push '$ECR_REPO_URL'/${imageName}:${GIT_COMMIT}"
+                    sh "docker rmi '$ECR_REPO_URL'/${imageName}:${GIT_COMMIT}"
                 }
             }
         }
