@@ -42,6 +42,7 @@ pipeline {
                 script {
                     sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL $ECR_REPO_URL ./infra/terraform/codedeploy_scripts/start_container.sh"
                     sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
+                    sh 'cat ./infra/terraform/codedeploy_scripts/start_container.sh'
                     /* sh 'aws deploy push \
                             --application-name SimpleWebPage \
                             --description "This is a revision for the application SimpleWebPage" \
