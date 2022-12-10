@@ -40,7 +40,6 @@ pipeline {
         stage ('Push revision') {
             steps {
                 script {
-                    sh "echo ${ECR_REPO_URL}"
                     sh 'echo $ECR_REPO_URL'
                     sh "echo $ECR_REPO_URL"
                     /* sh 'bash ./infra/terraform/scripts/replace_string.sh REPO_URL $ECR_REPO_URL ./infra/terraform/codedeploy_scripts/start_container.sh'
