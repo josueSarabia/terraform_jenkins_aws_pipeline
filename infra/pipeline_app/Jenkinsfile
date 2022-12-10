@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        imageName = "mrbluetoo/simple-web-server:latest"
+        imageName = "simple-web-server"
         customImage = ''
     }
 
@@ -8,7 +8,7 @@ pipeline {
     stages {
 
 
-        stage('Start Container for Testing') {
+        /* stage('Start Container for Testing') {
             steps {
                 script {
                     sh 'docker compose -f ./app/docker-compose.yml rm -f'
@@ -35,18 +35,20 @@ pipeline {
                     }
                 }
             }
-        }
+        } */
 
         stage ('Push revision') {
             steps {
                 script {
-                    sh 'aws deploy push \
+                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL $ECR_REPO_URL ./infra/terraform/codedeploy_scripts/start_container.sh"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
+                    /* sh 'aws deploy push \
                             --application-name SimpleWebPage \
                             --description "This is a revision for the application SimpleWebPage" \
                             --ignore-hidden-files \
                             --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
                             --source ./infra/terraform/codedeploy_scripts/ \
-                            --profile jenkins '
+                            --profile jenkins ' */
                 }
             }
         }
@@ -54,7 +56,8 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    customImage = docker.build(imageName, "./app/")
+                    // customImage = docker.build(imageName, "./app/")
+                    sh "docker build -t $ECR_REPO_URL/$imageName:${GIT_COMMIT} ./app/"
                 }
             }
         }
@@ -65,14 +68,17 @@ pipeline {
             // }
             steps {
                 script {
-                    docker.withRegistry('', 'DockerhubCredentials') {
+                    /* docker.withRegistry('', 'DockerhubCredentials') {
                         customImage.push()
-                    }
+                    } */
+                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL"
+                    sh "docker push $ECR_REPO_URL/$imageName:${GIT_COMMIT}"
+                    sh "docker rmi $ECR_REPO_URL/$imageName:${GIT_COMMIT}"
                 }
             }
         }
 
-        stage('Deploy') {
+        /* stage('Deploy') {
             steps {
                 script {
                     sh 'aws deploy create-deployment \
@@ -82,6 +88,6 @@ pipeline {
                         --profile jenkins'
                 }
             }
-        }
+        } */
     }
 }
