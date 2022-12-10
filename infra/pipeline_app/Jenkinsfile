@@ -6,7 +6,7 @@ pipeline {
     stages {
 
 
-        /* stage('Start Container for Testing') {
+        stage('Start Container for Testing') {
             steps {
                 script {
                     sh 'docker compose -f ./app/docker-compose.yml rm -f'
@@ -33,20 +33,20 @@ pipeline {
                     }
                 }
             }
-        } */
+        }
 
         stage ('Push revision') {
             steps {
                 script {
                     sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
                     sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
-                    /* sh 'aws deploy push \
-                            --application-name SimpleWebPage \
-                            --description "This is a revision for the application SimpleWebPage" \
+                    sh 'aws deploy push \
+                            --application-name simple-web \
+                            --description "This is a revision for the application simple-web" \
                             --ignore-hidden-files \
                             --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
                             --source ./infra/terraform/codedeploy_scripts/ \
-                            --profile jenkins ' */
+                            --profile jenkins '
                 }
             }
         }
@@ -72,16 +72,16 @@ pipeline {
             }
         }
 
-        /* stage('Deploy') {
+        stage('Deploy') {
             steps {
                 script {
                     sh 'aws deploy create-deployment \
-                        --application-name SimpleWebPage \
-                        --deployment-group-name SimpleWebPage_deployment_group \
+                        --application-name simple-web \
+                        --deployment-group-name simple-web_deployment_group \
                         --s3-location bucket=artifacts-demo-bucket,key=codedeploy_scripts.zip,bundleType=zip \
                         --profile jenkins'
                 }
             }
-        } */
+        }
     }
 }
