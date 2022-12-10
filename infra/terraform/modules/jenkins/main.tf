@@ -6,6 +6,10 @@ data "aws_iam_policy" "aws_s3_policy" {
    name = "AmazonS3FullAccess"
 }
 
+data "aws_iam_policy" "aws_ecr_policy" {
+   name = "AmazonEC2ContainerRegistryFullAccess"
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = "true"
 
@@ -38,6 +42,11 @@ resource "aws_iam_user_policy_attachment" "jenkins_user_attach_cd" {
 resource "aws_iam_user_policy_attachment" "jenkins_user_attach_s3" {
    user = aws_iam_user.jenkins_user.name
    policy_arn = data.aws_iam_policy.aws_s3_policy.arn
+}
+
+resource "aws_iam_user_policy_attachment" "jenkins_user_attach_ecr" {
+   user = aws_iam_user.jenkins_user.name
+   policy_arn = data.aws_iam_policy.aws_ecr_policy.arn
 }
 
 resource "aws_security_group" "jenkins_server_sg" {
@@ -226,6 +235,7 @@ resource "aws_instance" "jenkins_worker_server" {
    unzip awscliv2.zip
    sudo ./aws/install
 
+   export ECR_REPO_URL=${var.ecr_repo_url}
    export AWS_ACCESS_KEY_ID=${aws_iam_access_key.jenkins_user_key.id}
    export AWS_SECRET_ACCESS_KEY=${aws_iam_access_key.jenkins_user_key.secret}
    export AWS_CONFIG_FILE=$USER_HOME/.aws/config

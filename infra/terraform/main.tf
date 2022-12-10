@@ -55,10 +55,16 @@ module "app_load_balancer" {
   web_servers_info = module.compute.web_servers_info
 }
 
+module "ecr" {
+  source = "./modules/ecr"
+  repository_name = "${var.application_name}_repo"
+}
+
 module "jenkins" {
   source = "./modules/jenkins"
   vpc_id = module.networking.vpc_id
   subnet_id =  module.networking.public_subnets_info[0].id
   bucket_name = module.s3.artifacts_s3_bucket_name
+  ecr_repo_url = module.ecr.ecr_repo_url
   my_ip = var.my_ip
 }

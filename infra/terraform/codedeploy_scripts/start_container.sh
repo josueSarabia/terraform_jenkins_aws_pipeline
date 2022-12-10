@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -p 80:8081 -d mrbluetoo/simple-web-server:latest;
+docker run -p 80:8081 -d REPO_URL/simple-web-server:COMMIT;

@@ -1,8 +1,6 @@
 pipeline {
-    environment {
-        imageName = "mrbluetoo/simple-web-server:latest"
-        customImage = ''
-    }
+    /* environment {
+    } */
 
     agent { label "jenkins-worker"}
     stages {
@@ -40,9 +38,11 @@ pipeline {
         stage ('Push revision') {
             steps {
                 script {
+                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
                     sh 'aws deploy push \
-                            --application-name SimpleWebPage \
-                            --description "This is a revision for the application SimpleWebPage" \
+                            --application-name simple-web \
+                            --description "This is a revision for the application simple-web" \
                             --ignore-hidden-files \
                             --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
                             --source ./infra/terraform/codedeploy_scripts/ \
@@ -54,7 +54,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    customImage = docker.build(imageName, "./app/")
+                    sh "docker build -t ${ECR_REPO_URL}:${GIT_COMMIT} ./app/"
                 }
             }
         }
@@ -65,9 +65,9 @@ pipeline {
             // }
             steps {
                 script {
-                    docker.withRegistry('', 'DockerhubCredentials') {
-                        customImage.push()
-                    }
+                    sh "aws ecr get-login-password --region us-east-1 --profile jenkins | docker login --username AWS --password-stdin ${ECR_REPO_URL}"
+                    sh "docker push ${ECR_REPO_URL}:${GIT_COMMIT}"
+                    sh "docker rmi ${ECR_REPO_URL}:${GIT_COMMIT}"
                 }
             }
         }
@@ -76,8 +76,8 @@ pipeline {
             steps {
                 script {
                     sh 'aws deploy create-deployment \
-                        --application-name SimpleWebPage \
-                        --deployment-group-name SimpleWebPage_deployment_group \
+                        --application-name simple-web \
+                        --deployment-group-name simple-web_deployment_group \
                         --s3-location bucket=artifacts-demo-bucket,key=codedeploy_scripts.zip,bundleType=zip \
                         --profile jenkins'
                 }
