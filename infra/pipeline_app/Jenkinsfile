@@ -40,7 +40,6 @@ pipeline {
         stage ('Push revision') {
             steps {
                 script {
-                    sh "echo ${env.ECR_REPO_URL}"
                     sh "echo ${ECR_REPO_URL}"
                     sh 'echo $ECR_REPO_URL'
                     sh "echo $ECR_REPO_URL"
