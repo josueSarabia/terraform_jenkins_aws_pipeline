@@ -39,6 +39,7 @@ pipeline {
             steps {
                 script {
                     sh "docker run --rm --network='host' \
+                            -e SONAR_HOST_URL='http://$SONAR_HOST:9000' \
                             -e SONAR_LOGIN=$SONAR_LOGIN \
                             -v \$(pwd)/app/:/usr/src \
                             sonarsource/sonar-scanner-cli"
