@@ -41,7 +41,7 @@ pipeline {
                     sh "docker run --rm --network='host' \
                             -e SONAR_SCANNER_OPTS='-Dsonar.projectKey=simple-web' \
                             -e SONAR_LOGIN='${SONAR_LOGIN}' \
-                            -v './app/:/usr/src' \
+                            -v $(echo pwd)/app/:/usr/src \
                             sonarsource/sonar-scanner-cli"
                 }
             }
