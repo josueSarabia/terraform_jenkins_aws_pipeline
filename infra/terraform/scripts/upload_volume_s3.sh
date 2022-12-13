@@ -1,9 +1,9 @@
 #!/bin/bash
 
 AWS_S3_BUCKET="artifacts-demo-bucket"
-ARTIFACT_NAME="jenkins-volume"
+ARTIFACT_NAME="$1-volume"
 REGION="us-east-1"
-FILE_PATH="../jenkins-volume/"
+FILE_PATH="../$1-volume/"
 
 tar -zcvf $ARTIFACT_NAME.tar.gz $FILE_PATH
 aws configure set region $REGION

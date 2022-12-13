@@ -15,7 +15,7 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Unit Tests') {
             steps {
                 script {
                     sh 'docker exec webapp npm run test'
@@ -31,6 +31,18 @@ pipeline {
                     script {
                         sh 'docker compose -f ./app/docker-compose.yml down'
                     }
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    sh "docker.exe run --rm --network='host' \
+                            -e SONAR_SCANNER_OPTS='-Dsonar.projectKey=simple-web' \
+                            -e SONAR_LOGIN='${SONAR_LOGIN}' \
+                            -v ./app/:/usr/src \
+                            sonarsource/sonar-scanner-cli"
                 }
             }
         }

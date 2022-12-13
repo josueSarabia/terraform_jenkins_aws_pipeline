@@ -89,12 +89,11 @@ resource "aws_security_group" "jenkins_worker_server_sg" {
    vpc_id = var.vpc_id
 
    ingress {
-      description = "Allow SSH from my computer"
+      description = "Allow SSH from jenkins master server"
       from_port = "22"
       to_port = "22"
       protocol = "tcp"
       cidr_blocks = ["${aws_instance.jenkins_server.public_ip}/32"]
-      # security_groups = [ aws_security_group.jenkins_server_sg.id ]
    }
 
    egress {
@@ -110,6 +109,39 @@ resource "aws_security_group" "jenkins_worker_server_sg" {
    }
 }
 
+resource "aws_security_group" "sonar_server_sg" {
+   name = "sonar_server_sg"
+   description = "Security group for sonar server"
+   vpc_id = var.vpc_id
+
+   ingress {
+      description = "Allow traffic through port 9000"
+      from_port = "9000"
+      to_port = "9000"
+      protocol = "tcp"
+      cidr_blocks = ["${aws_instance.jenkins_worker_server_sg.public_ip}/32", "${var.my_ip}/32"]
+   }
+
+   ingress {
+      description = "Allow SSH from my computer"
+      from_port = "22"
+      to_port = "22"
+      protocol = "tcp"
+      cidr_blocks = ["${var.my_ip}/32"]
+   }
+
+   egress {
+      description = "Allow all outbound traffic"
+      from_port = "0"
+      to_port = "0"
+      protocol = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+   }
+
+   tags = {
+      Name = "sonar_server_sg"
+   }
+}
 
 resource "aws_instance" "jenkins_server" {
 
@@ -197,7 +229,6 @@ resource "aws_instance" "jenkins_worker_server" {
    #!/bin/bash
 
    USER_HOME="/home/ubuntu"
-   VOLUME_NAME="jenkins-volume"
 
    sudo apt-get update
    sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install \
@@ -255,3 +286,77 @@ resource "aws_instance" "jenkins_worker_server" {
   }
 }
 
+resource "aws_instance" "sonar_server" {
+  ami = data.aws_ami.ubuntu.id
+  
+  subnet_id =  var.subnet_id
+  
+  instance_type = "t2.medium"
+  
+  vpc_security_group_ids = [aws_security_group.sonar_server_sg.id]
+
+  associate_public_ip_address = true
+  
+  key_name = "devops"
+
+  user_data = <<-EOF
+   #!/bin/bash
+
+   USER_HOME="/home/ubuntu"
+   VOLUME_NAME="sonar-volume"
+   ARTIFACT_NAME="sonarQube/docker-compose.yml"
+
+   sudo apt-get update
+   sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install \
+      ca-certificates \
+      curl \
+      gnupg \
+      lsb-release
+   sudo mkdir -p /etc/apt/keyrings
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+   echo \
+   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   sudo apt-get update
+   sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+   sudo usermod -aG docker ubuntu
+
+   cd $USER_HOME
+
+   apt install unzip
+
+   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   unzip awscliv2.zip
+   sudo ./aws/install
+
+
+   export AWS_ACCESS_KEY_ID=${aws_iam_access_key.jenkins_user_key.id}
+   export AWS_SECRET_ACCESS_KEY=${aws_iam_access_key.jenkins_user_key.secret}
+   export AWS_CONFIG_FILE=$USER_HOME/.aws/config
+   export AWS_SHARED_CREDENTIALS_FILE=$USER_HOME/.aws/credentials
+   aws configure set default.region us-east-1
+   aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile jenkins
+   aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile jenkins
+
+   sudo chown -R ubuntu:ubuntu $USER_HOME/.aws/
+
+   aws s3 cp s3://${var.bucket_name}/$VOLUME_NAME.tar.gz $USER_HOME/$VOLUME_NAME.tar.gz --profile jenkins
+   tar -xf $USER_HOME/$VOLUME_NAME.tar.gz -C $USER_HOME/
+   sudo chown -R ubuntu:ubuntu $USER_HOME/$VOLUME_NAME
+
+   aws s3 cp s3://${var.bucket_name}/$ARTIFACT_NAME $USER_HOME/$ARTIFACT_NAME --profile jenkins
+   sudo chown -R ubuntu:ubuntu $USER_HOME/ARTIFACT_NAME
+
+   sudo apt install nodejs -y
+   sudo apt install npm -y
+
+   sudo sysctl -w vm.max_map_count=262144
+
+   docker compose up -d
+
+  EOF
+
+  tags = {
+   Name = "sonar_server"
+  }
+}

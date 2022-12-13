@@ -175,6 +175,6 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node
 
 **/jenkins-volume/**
-
+**/sonar-volume/**
 
 *.tar.gz
