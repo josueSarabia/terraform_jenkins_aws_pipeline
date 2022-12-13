@@ -345,14 +345,14 @@ resource "aws_instance" "sonar_server" {
    sudo chown -R ubuntu:ubuntu $USER_HOME/$VOLUME_NAME
 
    aws s3 cp s3://${var.bucket_name}/$ARTIFACT_NAME $USER_HOME/$ARTIFACT_NAME --profile jenkins
-   sudo chown -R ubuntu:ubuntu $USER_HOME/ARTIFACT_NAME
+   sudo chown -R ubuntu:ubuntu $USER_HOME/$ARTIFACT_NAME
 
    sudo apt install nodejs -y
    sudo apt install npm -y
 
    sudo sysctl -w vm.max_map_count=262144
 
-   docker compose -f ./sonarQube/docker-compose.yml up -d
+   docker compose -f ./$ARTIFACT_NAME up -d
 
   EOF
 
