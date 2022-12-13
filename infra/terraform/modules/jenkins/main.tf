@@ -352,7 +352,7 @@ resource "aws_instance" "sonar_server" {
 
    sudo sysctl -w vm.max_map_count=262144
 
-   docker compose up -d
+   docker compose -f ./sonarQube/docker-compose.yml up -d
 
   EOF
 
