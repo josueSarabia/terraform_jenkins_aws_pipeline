@@ -119,7 +119,7 @@ resource "aws_security_group" "sonar_server_sg" {
       from_port = "9000"
       to_port = "9000"
       protocol = "tcp"
-      cidr_blocks = ["${aws_instance.jenkins_worker_server_sg.public_ip}/32", "${var.my_ip}/32"]
+      cidr_blocks = ["${aws_instance.jenkins_worker_server.public_ip}/32", "${var.my_ip}/32"]
    }
 
    ingress {

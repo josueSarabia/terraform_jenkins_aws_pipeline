@@ -6,7 +6,7 @@ pipeline {
     stages {
 
 
-        stage('Start Container for Testing') {
+        /* stage('Start Container for Testing') {
             steps {
                 script {
                     sh 'docker compose -f ./app/docker-compose.yml rm -f'
@@ -33,12 +33,12 @@ pipeline {
                     }
                 }
             }
-        }
+        } */
 
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    sh "docker.exe run --rm --network='host' \
+                    sh "docker run --rm --network='host' \
                             -e SONAR_SCANNER_OPTS='-Dsonar.projectKey=simple-web' \
                             -e SONAR_LOGIN='${SONAR_LOGIN}' \
                             -v ./app/:/usr/src \
@@ -47,7 +47,7 @@ pipeline {
             }
         }
 
-        stage ('Push revision') {
+        /* stage ('Push revision') {
             steps {
                 script {
                     sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
@@ -94,6 +94,6 @@ pipeline {
                         --profile jenkins'
                 }
             }
-        }
+        } */
     }
 }
