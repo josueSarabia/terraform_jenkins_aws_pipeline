@@ -1,3 +1,12 @@
+/* def qualityGateValidation(qg) {
+    if (qg.status != 'OK') {
+        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+        return true
+    }
+
+    return false
+} */
+
 pipeline {
     /* environment {
     } */
@@ -6,7 +15,7 @@ pipeline {
     stages {
 
 
-        /* stage('Start Container for Testing') {
+        stage('Start Container for Testing') {
             steps {
                 script {
                     sh 'docker compose -f ./app/docker-compose.yml rm -f'
@@ -33,21 +42,23 @@ pipeline {
                     }
                 }
             }
-        } */
-
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    sh "docker run --rm --network='host' \
-                            -e SONAR_HOST_URL='http://$SONAR_HOST:9000' \
-                            -e SONAR_LOGIN=$SONAR_LOGIN \
-                            -v \$(pwd)/app/:/usr/src \
-                            sonarsource/sonar-scanner-cli"
-                }
-            }
         }
 
-        /* stage ('Push revision') {
+        /* stage('SonarQube Analysis') {
+            environment {
+                scannerHome = tool 'sonar-scanner'
+            }
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh "cd ./app/; ${scannerHome}/bin/sonar-scanner"
+                }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: qualityGateValidation(waitForQualityGate())
+                }
+            }
+        } */
+
+        stage ('Push revision') {
             steps {
                 script {
                     sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
@@ -94,6 +105,6 @@ pipeline {
                         --profile jenkins'
                 }
             }
-        } */
+        }
     }
 }
