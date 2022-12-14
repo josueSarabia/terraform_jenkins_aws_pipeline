@@ -46,11 +46,11 @@ pipeline {
 
         /* stage('SonarQube Analysis') {
             environment {
-                scannerHome = tool 'sonar-scanner'
+                SCANNER_HOME = tool 'sonar-scanner'
             }
             steps {
                 withSonarQubeEnv('sonarqube') {
-                    sh "cd ./app/; ${scannerHome}/bin/sonar-scanner"
+                    sh "cd ./app/; $SCANNER_HOME/bin/sonar-scanner -Dsonar.host.url=http://$SONAR_HOST:9000"
                 }
                 timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: qualityGateValidation(waitForQualityGate())
