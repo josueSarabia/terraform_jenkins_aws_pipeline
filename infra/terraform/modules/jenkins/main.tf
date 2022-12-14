@@ -286,7 +286,7 @@ resource "aws_instance" "jenkins_worker_server" {
   }
 }
 
-resource "aws_instance" "sonar_server" {
+/* resource "aws_instance" "sonar_server" {
   ami = data.aws_ami.ubuntu.id
   
   subnet_id =  var.subnet_id
@@ -360,3 +360,4 @@ resource "aws_instance" "sonar_server" {
    Name = "sonar_server"
   }
 }
+ */
