@@ -93,7 +93,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh "echo hello"
+                    sh "echo hello; ${env.CHANGE_TARGET}; ${env.BRANCH_NAME}"
                 }
             }
         }
@@ -112,7 +112,7 @@ pipeline {
                     sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
                     sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
 
-                    if (env.BRANCH_NAME == "staging") {
+                    if (env.CHANGE_TARGET == "staging") {
                         sh 'aws deploy push \
                             --application-name simple-web_staging \
                             --description "This is a revision for the application simple-web_staging" \
