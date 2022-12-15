@@ -19,7 +19,7 @@ resource "aws_security_group" "app_lb_sg" {
   }
 
   tags = {
-    Name = "${var.environment}-app_lb_sg"
+    Name = "app_lb_sg"
   }
 }
 
@@ -53,6 +53,40 @@ resource "aws_security_group" "ec2_sg_public_subnet" {
   }
 
   tags = {
-    Name = "${var.environment}-ec2-sg-public-subnet"
+    Name = "prod-ec2-sg-public-subnet"
+  }
+}
+
+resource "aws_security_group" "ec2_staging_sg_public_subnet" {
+  name = "Security Group for EC2 instances in public subnets"
+  vpc_id = var.vpc_id
+
+  dynamic "ingress" {
+    for_each = var.allowed_ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  ingress {
+      description = "Allow SSH from my computer"
+      from_port = "22"
+      to_port = "22"
+      protocol = "tcp"
+      cidr_blocks = ["${var.my_ip}/32"]
+   }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "staging-ec2-sg-public-subnet"
   }
 }

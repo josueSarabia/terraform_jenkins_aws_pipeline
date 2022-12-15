@@ -8,9 +8,6 @@ variable "profile" {
   default = "default"
 }
 
-variable "environment" {
-  default = "dev"
-}
 
 variable "cidr_block" {
   type = string
