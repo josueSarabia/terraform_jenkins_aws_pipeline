@@ -93,7 +93,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh "echo hello; ${env.CHANGE_TARGET}; ${env.BRANCH_NAME}"
+                    sh "echo hello;${env.CHANGE_TARGET}; ${env.BRANCH_NAME}"
                 }
             }
         }
