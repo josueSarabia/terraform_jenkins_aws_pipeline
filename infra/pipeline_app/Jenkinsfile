@@ -82,27 +82,11 @@ pipeline {
             }
         } */
 
-        stage ('dummy') {
-            when {
-                anyOf {
-                    branch "staging"
-                    branch "main"
-                }
-            }
-            steps {
-                script {
-                    sh "echo hello;"
-                }
-            }
-        }
-
         /* stage ('Push revision') {
             when {
                 anyOf {
                     branch "staging"
                     branch "main"
-                    changeRequest target: 'main'
-                    changeRequest target: 'staging'
                 }
             }
             steps {
@@ -137,8 +121,6 @@ pipeline {
                 anyOf {
                     branch "staging"
                     branch "main"
-                    changeRequest target: 'main'
-                    changeRequest target: 'staging'
                 }
             }
             steps {
@@ -156,8 +138,6 @@ pipeline {
                 anyOf {
                     branch "staging"
                     branch "main"
-                    changeRequest target: 'main'
-                    changeRequest target: 'staging'
                 }
             }
             steps {
@@ -173,7 +153,6 @@ pipeline {
             when {
                 anyOf {
                     branch "staging"
-                    changeRequest target: 'staging'
                 }
             }
             steps {
@@ -191,7 +170,6 @@ pipeline {
             when {
                 anyOf {
                     branch "main"
-                    changeRequest target: 'main'
                 }
             }
             steps {
