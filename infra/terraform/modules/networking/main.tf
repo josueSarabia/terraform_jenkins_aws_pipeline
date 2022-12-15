@@ -6,7 +6,7 @@ resource "aws_vpc" "main" {
   instance_tenancy = "default"
 
   tags = {
-    Name = "${var.environment}-vpc"
+    Name = "prod-vpc"
   }
 }
 
@@ -18,9 +18,9 @@ resource "aws_subnet" "public" {
   availability_zone = data.aws_availability_zones.availability_zone.names[count.index]
 
   tags = {
-    Name        = "${var.environment}-publicsubnet-${count.index + 1}"
+    Name        = "prod-publicsubnet-${count.index + 1}"
     AZ          = data.aws_availability_zones.availability_zone.names[count.index]
-    Environment = "${var.environment}-publicsubnet"
+    Environment = "prod-publicsubnet"
   }
   depends_on = [aws_vpc.main]
 }
@@ -29,7 +29,7 @@ resource "aws_internet_gateway" "internetgateway" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-InternetGateway"
+    Name = "prod-InternetGateway"
   }
 
   depends_on = [aws_vpc.main]
@@ -44,7 +44,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${var.environment}-publicroutetable"
+    Name = "prod-publicroutetable"
   }
 
   depends_on = [aws_internet_gateway.internetgateway]

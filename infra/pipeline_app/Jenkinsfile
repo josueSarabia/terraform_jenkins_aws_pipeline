@@ -16,6 +16,14 @@ pipeline {
 
 
         stage('Start Container for Testing') {
+            when {
+                anyOf {
+                    branch "staging"
+                    branch "main"
+                    changeRequest target: 'main'
+                    changeRequest target: 'staging'
+                }
+            }
             steps {
                 script {
                     sh 'docker compose -f ./app/docker-compose.yml rm -f'
@@ -25,6 +33,14 @@ pipeline {
         }
 
         stage('Run Unit Tests') {
+            when {
+                anyOf {
+                    branch "staging"
+                    branch "main"
+                    changeRequest target: 'main'
+                    changeRequest target: 'staging'
+                }
+            }
             steps {
                 script {
                     sh 'docker exec webapp npm run test'
@@ -45,6 +61,14 @@ pipeline {
         }
 
         /* stage('SonarQube Analysis') {
+            when {
+                anyOf {
+                    branch "staging"
+                    branch "main"
+                    changeRequest target: 'main'
+                    changeRequest target: 'staging'
+                }
+            }
             environment {
                 SCANNER_HOME = tool 'sonar-scanner'
             }
@@ -58,23 +82,47 @@ pipeline {
             }
         } */
 
-        stage ('Push revision') {
+        /* stage ('Push revision') {
+            when {
+                anyOf {
+                    branch "staging"
+                    branch "main"
+                }
+            }
             steps {
                 script {
                     sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
                     sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
-                    sh 'aws deploy push \
+
+                    if (env.CHANGE_TARGET == "staging") {
+                        sh 'aws deploy push \
+                            --application-name simple-web_staging \
+                            --description "This is a revision for the application simple-web_staging" \
+                            --ignore-hidden-files \
+                            --s3-location s3://artifacts-demo-bucket/codedeploy_scripts_staging.zip \
+                            --source ./infra/terraform/codedeploy_scripts/ \
+                            --profile jenkins '
+                    } else { // main
+                        sh 'aws deploy push \
                             --application-name simple-web \
                             --description "This is a revision for the application simple-web" \
                             --ignore-hidden-files \
                             --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
                             --source ./infra/terraform/codedeploy_scripts/ \
                             --profile jenkins '
+                    }
+                    
                 }
             }
         }
 
         stage('Build Image') {
+            when {
+                anyOf {
+                    branch "staging"
+                    branch "main"
+                }
+            }
             steps {
                 script {
                     sh "docker build -t ${ECR_REPO_URL}:${GIT_COMMIT} ./app/"
@@ -84,8 +132,14 @@ pipeline {
 
         stage('Push to Registry') {
             // when {
-            //    branch "main"
+            //    branch "DS-*"
             // }
+            when {
+                anyOf {
+                    branch "staging"
+                    branch "main"
+                }
+            }
             steps {
                 script {
                     sh "aws ecr get-login-password --region us-east-1 --profile jenkins | docker login --username AWS --password-stdin ${ECR_REPO_URL}"
@@ -95,7 +149,29 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to Staging') {
+            when {
+                anyOf {
+                    branch "staging"
+                }
+            }
+            steps {
+                script {
+                    sh 'aws deploy create-deployment \
+                        --application-name simple-web_staging \
+                        --deployment-group-name simple-web_deployment_group_staging \
+                        --s3-location bucket=artifacts-demo-bucket,key=codedeploy_scripts_staging.zip,bundleType=zip \
+                        --profile jenkins'
+                }
+            }
+        } 
+        
+        stage('Deploy to Production') {
+            when {
+                anyOf {
+                    branch "main"
+                }
+            }
             steps {
                 script {
                     sh 'aws deploy create-deployment \
@@ -105,6 +181,8 @@ pipeline {
                         --profile jenkins'
                 }
             }
-        }
+        } 
+        
+        */
     }
 }

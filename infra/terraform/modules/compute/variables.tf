@@ -20,6 +20,6 @@ variable "web_security_groups" {
   type = list(string)
 }
 
-variable "environment" {
-  default = "dev"
+variable "web_staging_security_groups" {
+  type = list(string)
 }

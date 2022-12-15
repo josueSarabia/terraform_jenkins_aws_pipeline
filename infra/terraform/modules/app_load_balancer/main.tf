@@ -1,5 +1,5 @@
 resource "aws_alb" "main" {
-  name            = "${var.application_name}-${var.environment}-lb"
+  name            = "${var.application_name}-lb"
   subnets         = var.subnets
   security_groups = var.load_balancer_sg
 }
@@ -16,7 +16,7 @@ resource "aws_alb_listener" "front_end" {
 }
 
 resource "aws_alb_target_group" "app" {
-  name        = "${var.application_name}-${var.environment}-tg"
+  name        = "${var.application_name}-tg"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
