@@ -87,13 +87,11 @@ pipeline {
                 anyOf {
                     branch "staging"
                     branch "main"
-                    changeRequest target: 'main'
-                    changeRequest target: 'staging'
                 }
             }
             steps {
                 script {
-                    sh "echo hello;${env.CHANGE_TARGET}; ${env.BRANCH_NAME}"
+                    sh "echo hello;"
                 }
             }
         }
