@@ -8,6 +8,7 @@ chmod +x ./upload_docker_compose_s3.sh
 ./upload_volume_s3.sh jenkins
 ./upload_volume_s3.sh sonar
 ./upload_docker_compose_s3.sh sonarQube
+./upload_directory_s3.sh "../docker-compose/monitoring" "monitoring"
 
 terraform -chdir="../" apply -target="module.networking" -target="module.s3" -target="module.jenkins" -auto-approve
 

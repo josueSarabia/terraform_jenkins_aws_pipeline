@@ -13,6 +13,7 @@ module "security_groups" {
   source = "./modules/security_groups"
   vpc_id = module.networking.vpc_id
   allowed_ports = ["80", "443"]
+  prometheus_sg_id = module.jenkins.prometheus_sg_public_subnet_id
   my_ip = var.my_ip
 }
 
@@ -24,6 +25,7 @@ module "compute" {
   instance_type = "t2.micro"
   web_security_groups = [module.security_groups.ec2_sg_public_subnet_id]
   web_staging_security_groups = [module.security_groups.ec2_sg_staging_public_subnet_id]
+  bucket_name = module.s3.artifacts_s3_bucket_name
 }
 
 module "iam" {

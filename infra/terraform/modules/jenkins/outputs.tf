@@ -13,3 +13,7 @@ output "jenkins_user_secret" {
    value = aws_iam_access_key.jenkins_user_key.secret
    sensitive = true
 }
+
+output "prometheus_sg_public_subnet_id" {
+   value = aws_security_group.prometheus_sg_public_subnet.id
+}

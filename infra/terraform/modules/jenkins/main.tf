@@ -143,6 +143,38 @@ resource "aws_security_group" "sonar_server_sg" {
    }
 }
 
+resource "aws_security_group" "prometheus_sg_public_subnet" {
+  name = "Security Group for Prometheus instances in public subnets"
+  vpc_id = var.vpc_id
+
+  ingress {
+    description = "Allow access to grafana dashboard from my computer"
+    from_port = "3000"
+    to_port = "3000"
+    protocol = "tcp"
+    cidr_blocks = ["${var.my_ip}/32"]
+  }
+
+  ingress {
+    description = "Allow SSH from my computer"
+    from_port = "22"
+    to_port = "22"
+    protocol = "tcp"
+    cidr_blocks = ["${var.my_ip}/32"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "prometheus-sg-public-subnet"
+  }
+}
+
 resource "aws_instance" "jenkins_server" {
 
   ami = data.aws_ami.ubuntu.id
@@ -361,3 +393,64 @@ resource "aws_instance" "jenkins_worker_server" {
   }
 }
 */
+
+resource "aws_instance" "prometheus_server" {
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t2.micro"
+  subnet_id              = var.subnet_id
+  vpc_security_group_ids = [aws_security_group.prometheus_sg_public_subnet.id]
+  associate_public_ip_address = true
+  key_name = "devops"
+
+  user_data = <<-EOF
+      #!/bin/bash
+      USER_HOME="/home/ubuntu"
+      ARTIFACT_NAME="monitoring"
+
+      sudo apt-get update
+      sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install \
+         ca-certificates \
+         curl \
+         gnupg \
+         lsb-release
+      sudo mkdir -p /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      sudo apt-get update
+      sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+      sudo usermod -aG docker ubuntu
+
+      cd $USER_HOME
+
+      apt install unzip
+
+      curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      unzip awscliv2.zip
+      sudo ./aws/install
+
+
+      export AWS_ACCESS_KEY_ID=${aws_iam_access_key.jenkins_user_key.id}
+      export AWS_SECRET_ACCESS_KEY=${aws_iam_access_key.jenkins_user_key.secret}
+      export AWS_CONFIG_FILE=$USER_HOME/.aws/config
+      export AWS_SHARED_CREDENTIALS_FILE=$USER_HOME/.aws/credentials
+      aws configure set default.region us-east-1
+      aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile jenkins
+      aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile jenkins
+
+      sudo chown -R ubuntu:ubuntu $USER_HOME/.aws/
+
+      aws s3 cp s3://${var.bucket_name}/$ARTIFACT_NAME.tar.gz $USER_HOME/$ARTIFACT_NAME.tar.gz --profile jenkins
+      tar -xf $USER_HOME/$ARTIFACT_NAME.tar.gz -C $USER_HOME/
+      sudo chown -R ubuntu:ubuntu $USER_HOME/$ARTIFACT_NAME
+
+      docker compose -f ./$ARTIFACT_NAME/prometheus/docker-compose.yml up -d
+
+
+  EOF
+  
+  tags = {
+    Name = "prometheus_server"
+  }
+}

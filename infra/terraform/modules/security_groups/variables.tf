@@ -10,3 +10,7 @@ variable "allowed_ports" {
 variable "my_ip" {
   type = string
 }
+
+output "prometheus_sg_id" {
+  type = string
+}

@@ -196,3 +196,5 @@ dist
 **/sonar-volume/**
 
 *.tar.gz
+
+**/assets/img/**
