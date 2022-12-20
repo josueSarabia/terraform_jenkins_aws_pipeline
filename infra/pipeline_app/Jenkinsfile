@@ -11,11 +11,49 @@ pipeline {
     /* environment {
     } */
 
-    agent { label "jenkins-worker"}
+    /* agent { label "jenkins-worker"} */
+    agent any
     stages {
 
+        stage('Build Image') {
+            when {
+                anyOf {
+                    branch "staging"
+                    branch "main"
+                }
+            }
+            steps {
+                GIT_LOG = sh (
+                    script: "git log -1 --pretty=%B ${GIT_COMMIT}",
+                    returnStdout: true
+                ).trim()
 
-        stage('Start Container for Testing') {
+                EXTRACTED_GIT_LOG = sh (
+                    script: "echo ${GIT_LOG} | grep -Po '\[\K[^]]*'" ,
+                    returnStdout: true
+                ).trim()
+
+                script {
+                    if (EXTRACTED_GIT_LOG == "frontend") {
+                        /* sh "docker build -t ${ECR_REPO_URL_FRONTEND}:${GIT_COMMIT} ./app/frontend/" */
+                        sh "echo i am front"
+                    } else if (EXTRACTED_GIT_LOG == "backend") {
+                        /* sh "docker build -t ${ECR_REPO_URL_BACKEND}:${GIT_COMMIT} ./app/backend/" */
+                        sh "echo i am back"
+                    } else {
+                        /* sh "docker build -t ${ECR_REPO_URL_FRONTEND}:${GIT_COMMIT} ./app/frontend/"
+                        sh "docker build -t ${ECR_REPO_URL_BACKEND}:${GIT_COMMIT} ./app/backend/" */
+                        sh "echo i am both"
+                    }
+                    sh "echo ${EXTRACTED_GIT_LOG} ECR_REPO_URL_BACKEND"
+                }
+                /* script {
+                    sh "docker build -t ${ECR_REPO_URL}:${GIT_COMMIT} ./app/"
+                } */
+            }
+        }
+
+        /* stage('Start Container for Testing') {
             when {
                 anyOf {
                     branch "staging"
@@ -27,7 +65,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker compose -f ./app/docker-compose.yml rm -f'
-                    sh 'docker compose -f ./app/docker-compose.yml up -d webapp'
+                    sh 'docker compose -f ./app/docker-compose.yml up -d backend'
                 }
             }
         }
@@ -43,7 +81,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker exec webapp npm run test'
+                    sh 'docker exec backend npm run test'
                 }
             }
             post {
@@ -58,7 +96,7 @@ pipeline {
                     }
                 }
             }
-        }
+        } */
 
         /* stage('SonarQube Analysis') {
             when {
@@ -82,39 +120,7 @@ pipeline {
             }
         } */
 
-        /* stage ('Push revision') {
-            when {
-                anyOf {
-                    branch "staging"
-                    branch "main"
-                }
-            }
-            steps {
-                script {
-                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
-                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
-
-                    if (env.CHANGE_TARGET == "staging") {
-                        sh 'aws deploy push \
-                            --application-name simple-web_staging \
-                            --description "This is a revision for the application simple-web_staging" \
-                            --ignore-hidden-files \
-                            --s3-location s3://artifacts-demo-bucket/codedeploy_scripts_staging.zip \
-                            --source ./infra/terraform/codedeploy_scripts/ \
-                            --profile jenkins '
-                    } else { // main
-                        sh 'aws deploy push \
-                            --application-name simple-web \
-                            --description "This is a revision for the application simple-web" \
-                            --ignore-hidden-files \
-                            --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
-                            --source ./infra/terraform/codedeploy_scripts/ \
-                            --profile jenkins '
-                    }
-                    
-                }
-            }
-        }
+        /*
 
         stage('Build Image') {
             when {
@@ -145,6 +151,40 @@ pipeline {
                     sh "aws ecr get-login-password --region us-east-1 --profile jenkins | docker login --username AWS --password-stdin ${ECR_REPO_URL}"
                     sh "docker push ${ECR_REPO_URL}:${GIT_COMMIT}"
                     sh "docker rmi ${ECR_REPO_URL}:${GIT_COMMIT}"
+                }
+            }
+        }
+
+        stage ('Push revision') {
+            when {
+                anyOf {
+                    branch "staging"
+                    branch "main"
+                }
+            }
+            steps {
+                script {
+                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
+
+                    if (env.CHANGE_TARGET == "staging") {
+                        sh 'aws deploy push \
+                            --application-name simple-web_staging \
+                            --description "This is a revision for the application simple-web_staging" \
+                            --ignore-hidden-files \
+                            --s3-location s3://artifacts-demo-bucket/codedeploy_scripts_staging.zip \
+                            --source ./infra/terraform/codedeploy_scripts/ \
+                            --profile jenkins '
+                    } else { // main
+                        sh 'aws deploy push \
+                            --application-name simple-web \
+                            --description "This is a revision for the application simple-web" \
+                            --ignore-hidden-files \
+                            --s3-location s3://artifacts-demo-bucket/codedeploy_scripts.zip \
+                            --source ./infra/terraform/codedeploy_scripts/ \
+                            --profile jenkins '
+                    }
+                    
                 }
             }
         }
