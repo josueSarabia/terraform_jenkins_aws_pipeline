@@ -24,7 +24,8 @@ export default {
   },
   methods: {
     moreInfoSelect(index) { //More Info area tab selector
-      return this.active = index
+      this.active = index
+      return index
     },
   }
 }

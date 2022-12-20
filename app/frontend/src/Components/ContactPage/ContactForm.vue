@@ -3,7 +3,7 @@
     <div class="container-fluid py-5">
       <div class="row d-flex">
         <div class="col-12 col-xl-6 col-lg-6 col-md-6 col-sm-12 order-sm-0 order-12" style="margin-right:-120px;">
-          <img class="img-fluid" src="@/assets/con1.jpg">
+          <img alt="form logo" class="img-fluid" src="@/assets/con1.jpg">
         </div>
         <div class="col-12 col-xl-6 col-lg-5 col-md-6 col-sm-12 order-first order-xl-0">
           <h1>Hello there</h1>

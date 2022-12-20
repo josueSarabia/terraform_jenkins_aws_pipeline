@@ -14,7 +14,7 @@
         <transition-group name="fade">
           <div class="row" v-for="thing in cartContent" v-bind:key="thing.id">
             <div class="col4 col-xl-4 col-lg-4 col-md-4 col-sm-4">
-              <img :src="thing.img" style="width: 90px;">
+              <img :src="thing.img" style="width: 90px;" alt="cart image">
             </div>
             <div class="col6 col-xl-6 col-lg-6 col-md-6 col-sm-6">
               <h4>{{ thing.title }}</h4>

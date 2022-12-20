@@ -119,7 +119,8 @@ export default {
   },
   methods: {
     incCardNumber() {
-      return this.showCards += 6
+      this.showCards += 6
+      return this.showCards
     },
     valueSlider(value) {
       var x = value[0];
@@ -128,21 +129,25 @@ export default {
     },
     sortDate() {
        this.cards.sort((a, b) => (a.title.length * 2)-(b.title.length * 4))
-       return this.sortButton = 'DATE'
+       this.sortButton = 'DATE'
+       return this.sortButton
     },
     sortPrice() {
        this.cards.sort((a, b) => a.price-b.price)
-       return this.sortButton = 'PRICE'
+       this.sortButton = 'PRICE'
+       return this.sortButton
     },
     sortTrend() {
        this.cards.sort((a, b) => a.type.length-b.type.length)
-       return this.sortButton = 'TRENDING'
+       this.sortButton = 'TRENDING'
+       return this.sortButton
     },
     sortI(name){
       this.cards = this.it.filter((e) => e.type.match(name) || e.color.match(name))
     },
     reSet() {
-      return this.cards = this.it
+      this.cards = this.it
+      return this.it
     }
   }
   }

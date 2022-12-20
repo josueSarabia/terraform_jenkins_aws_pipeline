@@ -57,10 +57,6 @@ export default {
   color: #2c3539;
 }
 
-.newsletter-area .newsletter-text h2 {
-  color: #2c3539;
-}
-
 .newsletter-area .newsletter-text p {
   color: #2c3539;
   margin-bottom: 0;
