@@ -8,18 +8,22 @@
 } */
 
 pipeline {
-    /* environment {
-    } */
+    environment {
+        ECR_REPO_URL = ""
+        FEATURE = ""
+    }
 
     /* agent { label "jenkins-worker"} */
     agent any
     stages {
 
-        stage('Build Image') {
+        stage('Validate Commit') {
             when {
                 anyOf {
                     branch "staging"
                     branch "main"
+                    changeRequest target: 'main'
+                    changeRequest target: 'staging'
                 }
             }
             steps {
@@ -33,22 +37,18 @@ pipeline {
                         script: "echo ${GIT_LOG} | grep -Po '\\[\\K[^]]*'" ,
                         returnStdout: true
                     ).trim()
+                    
                     if (EXTRACTED_GIT_LOG == "frontend") {
-                        /* sh "docker build -t ${ECR_REPO_URL_FRONTEND}:${GIT_COMMIT} ./app/frontend/" */
-                        sh "echo i am front"
+                        ECR_REPO_URL = ECR_REPO_URL_FRONTEND
+                        FEATURE = "frontend"
                     } else if (EXTRACTED_GIT_LOG == "backend") {
-                        /* sh "docker build -t ${ECR_REPO_URL_BACKEND}:${GIT_COMMIT} ./app/backend/" */
-                        sh "echo i am back"
+                        ECR_REPO_URL = ECR_REPO_URL_BACKEND
+                        FEATURE = "backend"
                     } else {
-                        /* sh "docker build -t ${ECR_REPO_URL_FRONTEND}:${GIT_COMMIT} ./app/frontend/"
-                        sh "docker build -t ${ECR_REPO_URL_BACKEND}:${GIT_COMMIT} ./app/backend/" */
-                        sh "echo i am both"
+                        echo "No feature was included in the commit. Please add [name-of-feature] in the commit"
+                        currentBuild.result = 'FAILURE'
                     }
-                    sh "echo ${EXTRACTED_GIT_LOG} ECR_REPO_URL_BACKEND"
                 }
-                /* script {
-                    sh "docker build -t ${ECR_REPO_URL}:${GIT_COMMIT} ./app/"
-                } */
             }
         }
 
