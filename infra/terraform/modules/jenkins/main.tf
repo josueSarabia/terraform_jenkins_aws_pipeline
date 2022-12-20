@@ -404,7 +404,7 @@ resource "aws_instance" "prometheus_server" {
   user_data = <<-EOF
       #!/bin/bash
       USER_HOME="/home/ubuntu"
-      ARTIFACT_NAME="monitoring"
+      ARTIFACT_NAME="docker-compose/monitoring"
 
       sudo apt-get update
       sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install \

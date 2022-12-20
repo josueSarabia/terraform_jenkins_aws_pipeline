@@ -27,7 +27,7 @@ resource "aws_instance" "web_server" {
   #!/bin/bash
 
   USER_HOME="/home/ubuntu"
-  ARTIFACT_NAME="monitoring"
+  ARTIFACT_NAME="docker-compose/monitoring"
 
   sudo apt-get update
   sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install \
