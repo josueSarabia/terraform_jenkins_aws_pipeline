@@ -298,7 +298,6 @@ resource "aws_instance" "jenkins_worker_server" {
    unzip awscliv2.zip
    sudo ./aws/install
 
-   export ECR_REPO_URL=${var.ecr_repo_url}
    export AWS_ACCESS_KEY_ID=${aws_iam_access_key.jenkins_user_key.id}
    export AWS_SECRET_ACCESS_KEY=${aws_iam_access_key.jenkins_user_key.secret}
    export AWS_CONFIG_FILE=$USER_HOME/.aws/config
