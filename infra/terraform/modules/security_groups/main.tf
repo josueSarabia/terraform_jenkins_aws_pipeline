@@ -42,7 +42,7 @@ resource "aws_security_group" "ec2_sg_public_subnet" {
     from_port = "9100"
     to_port = "9100"
     protocol = "tcp"
-    cidr_blocks = [var.prometheus_sg_id]
+    security_groups = [var.prometheus_sg_id]
   }
 
   ingress {
@@ -84,7 +84,7 @@ resource "aws_security_group" "ec2_staging_sg_public_subnet" {
     from_port = "9100"
     to_port = "9100"
     protocol = "tcp"
-    cidr_blocks = [var.prometheus_sg_id]
+    security_groups = [var.prometheus_sg_id]
   }
 
   ingress {
