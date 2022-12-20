@@ -11,6 +11,6 @@ variable "my_ip" {
   type = string
 }
 
-output "prometheus_sg_id" {
+variable "prometheus_sg_id" {
   type = string
 }

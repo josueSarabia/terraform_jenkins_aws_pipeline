@@ -13,8 +13,8 @@ pipeline {
         FEATURE = ""
     }
 
-    /* agent { label "jenkins-worker"} */
-    agent any
+    agent { label "jenkins-worker"}
+    /* agent any */
     stages {
 
         stage('Validate Commit') {
@@ -88,12 +88,12 @@ pipeline {
             post {
                 success {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down'
+                        sh 'docker compose -f ./app/docker-compose.yml down --rmi'
                     }
                 }
                 failure {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down'
+                        sh 'docker compose -f ./app/docker-compose.yml down --rmi'
                     }
                 }
             }
@@ -121,9 +121,7 @@ pipeline {
             }
         } */
 
-        /*
-
-        stage('Build Image') {
+        /* stage('Build Image') {
             when {
                 anyOf {
                     branch "staging"
@@ -165,8 +163,12 @@ pipeline {
             }
             steps {
                 script {
-                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
-                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/codedeploy_scripts/start_container.sh"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL_FRONTEND ${ECR_REPO_URL_FRONTEND} ./infra/terraform/docker-compose/app/docker-compose.yml"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL_BACKEND ${ECR_REPO_URL_BACKEND} ./infra/terraform/docker-compose/app/docker-compose.yml"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/docker-compose/app/docker-compose.yml"
+
+                    sh "mv ./infra/terraform/docker-compose/app/docker-compose.yml ./infra/terraform/codedeploy_scripts/docker-compose.yml"
+
 
                     if (env.CHANGE_TARGET == "staging") {
                         sh 'aws deploy push \

@@ -298,7 +298,6 @@ resource "aws_instance" "jenkins_worker_server" {
    unzip awscliv2.zip
    sudo ./aws/install
 
-   export ECR_REPO_URL=${var.ecr_repo_url}
    export AWS_ACCESS_KEY_ID=${aws_iam_access_key.jenkins_user_key.id}
    export AWS_SECRET_ACCESS_KEY=${aws_iam_access_key.jenkins_user_key.secret}
    export AWS_CONFIG_FILE=$USER_HOME/.aws/config
@@ -405,7 +404,7 @@ resource "aws_instance" "prometheus_server" {
   user_data = <<-EOF
       #!/bin/bash
       USER_HOME="/home/ubuntu"
-      ARTIFACT_NAME="monitoring"
+      ARTIFACT_NAME="docker-compose/monitoring"
 
       sudo apt-get update
       sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install \
