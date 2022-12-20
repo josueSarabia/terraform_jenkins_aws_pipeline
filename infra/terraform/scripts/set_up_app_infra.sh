@@ -9,7 +9,7 @@ if [ $1 == "plan" ]; then
         -target="module.iam" \
         -target="module.codedeploy" \
         -target="module.app_load_balancer" \
-        -target="modules.ecr"
+        -target="module.ecr"
 else
     terraform -chdir="infra/terraform/" $1 \
         -target="module.networking" \
@@ -19,6 +19,6 @@ else
         -target="module.iam" \
         -target="module.codedeploy" \
         -target="module.app_load_balancer" \
-        -target="modules.ecr" \
+        -target="module.ecr" \
         -auto-approve
 fi
