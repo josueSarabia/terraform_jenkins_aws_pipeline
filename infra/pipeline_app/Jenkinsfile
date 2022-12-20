@@ -23,17 +23,16 @@ pipeline {
                 }
             }
             steps {
-                GIT_LOG = sh (
-                    script: "git log -1 --pretty=%B ${GIT_COMMIT}",
-                    returnStdout: true
-                ).trim()
-
-                EXTRACTED_GIT_LOG = sh (
-                    script: "echo ${GIT_LOG} | grep -Po '\\[\\K[^]]*'" ,
-                    returnStdout: true
-                ).trim()
-
                 script {
+                    GIT_LOG = sh (
+                        script: "git log -1 --pretty=%B ${GIT_COMMIT}",
+                        returnStdout: true
+                    ).trim()
+
+                    EXTRACTED_GIT_LOG = sh (
+                        script: "echo ${GIT_LOG} | grep -Po '\\[\\K[^]]*'" ,
+                        returnStdout: true
+                    ).trim()
                     if (EXTRACTED_GIT_LOG == "frontend") {
                         /* sh "docker build -t ${ECR_REPO_URL_FRONTEND}:${GIT_COMMIT} ./app/frontend/" */
                         sh "echo i am front"
