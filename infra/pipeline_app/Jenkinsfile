@@ -29,7 +29,7 @@ pipeline {
                 ).trim()
 
                 EXTRACTED_GIT_LOG = sh (
-                    script: "echo ${GIT_LOG} | grep -Po '\[\K[^]]*'" ,
+                    script: "echo ${GIT_LOG} | grep -Po '\\[\\K[^]]*'" ,
                     returnStdout: true
                 ).trim()
 
