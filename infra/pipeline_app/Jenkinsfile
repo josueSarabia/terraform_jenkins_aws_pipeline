@@ -28,15 +28,20 @@ pipeline {
             }
             steps {
                 script {
-                    GIT_LOG = sh (
-                        script: "git log -1 --pretty=%B ${GIT_COMMIT}",
-                        returnStdout: true
-                    ).trim()
+                    try {
+                        GIT_LOG = sh (
+                            script: "git log -1 --pretty=%B ${GIT_COMMIT}",
+                            returnStdout: true
+                        ).trim()
 
-                    EXTRACTED_GIT_LOG = sh (
-                        script: "echo ${GIT_LOG} | grep -Po '\\[\\K[^]]*'" ,
-                        returnStdout: true
-                    ).trim()
+                        EXTRACTED_GIT_LOG = sh (
+                            script: "echo ${GIT_LOG} | grep -Po '\\[\\K[^]]*'" ,
+                            returnStdout: true
+                        ).trim()
+                    } catch (err) {
+                        echo "No feature was included in the commit. Please add [name-of-feature] in the commit"
+                        currentBuild.result = 'FAILURE'
+                    }
                     
                     if (EXTRACTED_GIT_LOG == "frontend") {
                         ECR_REPO_URL = ECR_REPO_URL_FRONTEND
@@ -44,9 +49,6 @@ pipeline {
                     } else if (EXTRACTED_GIT_LOG == "backend") {
                         ECR_REPO_URL = ECR_REPO_URL_BACKEND
                         FEATURE = "backend"
-                    } else {
-                        echo "No feature was included in the commit. Please add [name-of-feature] in the commit"
-                        currentBuild.result = 'FAILURE'
                     }
                 }
             }
