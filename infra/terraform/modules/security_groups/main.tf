@@ -66,7 +66,7 @@ resource "aws_security_group" "ec2_sg_public_subnet" {
 }
 
 resource "aws_security_group" "ec2_staging_sg_public_subnet" {
-  name = "Security Group for EC2 instances in public subnets"
+  name = "Security Group for EC2 staging instance in public subnets"
   vpc_id = var.vpc_id
 
   dynamic "ingress" {
