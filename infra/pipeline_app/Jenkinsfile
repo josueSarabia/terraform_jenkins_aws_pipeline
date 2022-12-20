@@ -38,17 +38,17 @@ pipeline {
                             script: "echo ${GIT_LOG} | grep -Po '\\[\\K[^]]*'" ,
                             returnStdout: true
                         ).trim()
+
+                        if (EXTRACTED_GIT_LOG == "frontend") {
+                            ECR_REPO_URL = ECR_REPO_URL_FRONTEND
+                            FEATURE = "frontend"
+                        } else if (EXTRACTED_GIT_LOG == "backend") {
+                            ECR_REPO_URL = ECR_REPO_URL_BACKEND
+                            FEATURE = "backend"
+                        }
                     } catch (err) {
                         echo "No feature was included in the commit. Please add [name-of-feature] in the commit"
                         currentBuild.result = 'FAILURE'
-                    }
-                    
-                    if (EXTRACTED_GIT_LOG == "frontend") {
-                        ECR_REPO_URL = ECR_REPO_URL_FRONTEND
-                        FEATURE = "frontend"
-                    } else if (EXTRACTED_GIT_LOG == "backend") {
-                        ECR_REPO_URL = ECR_REPO_URL_BACKEND
-                        FEATURE = "backend"
                     }
                 }
             }
