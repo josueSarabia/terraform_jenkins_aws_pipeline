@@ -23,3 +23,7 @@ variable "web_security_groups" {
 variable "web_staging_security_groups" {
   type = list(string)
 }
+
+variable "bucket_name" {
+  type = string
+}

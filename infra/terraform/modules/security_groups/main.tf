@@ -38,12 +38,20 @@ resource "aws_security_group" "ec2_sg_public_subnet" {
   }
 
   ingress {
-      description = "Allow SSH from my computer"
-      from_port = "22"
-      to_port = "22"
-      protocol = "tcp"
-      cidr_blocks = ["${var.my_ip}/32"]
-   }
+    description = "Allow connection from prometheus server"
+    from_port = "9100"
+    to_port = "9100"
+    protocol = "tcp"
+    cidr_blocks = [var.prometheus_sg_id]
+  }
+
+  ingress {
+    description = "Allow SSH from my computer"
+    from_port = "22"
+    to_port = "22"
+    protocol = "tcp"
+    cidr_blocks = ["${var.my_ip}/32"]
+  }
 
   egress {
     from_port   = 0
@@ -72,12 +80,20 @@ resource "aws_security_group" "ec2_staging_sg_public_subnet" {
   }
 
   ingress {
-      description = "Allow SSH from my computer"
-      from_port = "22"
-      to_port = "22"
-      protocol = "tcp"
-      cidr_blocks = ["${var.my_ip}/32"]
-   }
+    description = "Allow connection from prometheus server"
+    from_port = "9100"
+    to_port = "9100"
+    protocol = "tcp"
+    cidr_blocks = [var.prometheus_sg_id]
+  }
+
+  ingress {
+    description = "Allow SSH from my computer"
+    from_port = "22"
+    to_port = "22"
+    protocol = "tcp"
+    cidr_blocks = ["${var.my_ip}/32"]
+  }
 
   egress {
     from_port   = 0
