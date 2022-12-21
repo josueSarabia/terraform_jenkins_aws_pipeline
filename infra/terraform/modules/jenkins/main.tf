@@ -423,7 +423,7 @@ resource "aws_iam_role" "ec2_prometheus_instance_role" {
 
 }
 
-resource "aws_iam_role_policy_attachment" "codeDeploy_role_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "prometheus_role_policy_attachment" {
   policy_arn = data.aws_iam_policy.aws_ec2_read_only_policy.arn
   role       = aws_iam_role.ec2_prometheus_instance_role.name
 }
