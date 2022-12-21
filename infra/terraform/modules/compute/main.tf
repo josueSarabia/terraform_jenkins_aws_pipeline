@@ -124,7 +124,7 @@ resource "aws_instance" "web_server_staging" {
 
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
   unzip awscliv2.zip
-  sudo ./aws/install
+  sudo ./aws/install 
 
   aws s3 cp s3://${var.bucket_name}/$ARTIFACT_NAME.tar.gz $USER_HOME/$ARTIFACT_NAME.tar.gz
   tar -xf $USER_HOME/$ARTIFACT_NAME.tar.gz -C $USER_HOME/
