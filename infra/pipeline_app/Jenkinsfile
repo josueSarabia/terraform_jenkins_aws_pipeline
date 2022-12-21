@@ -54,7 +54,7 @@ pipeline {
             }
         }
 
-        /* stage('Start Container for Testing') {
+        stage('Start Container for Testing') {
             when {
                 anyOf {
                     branch "staging"
@@ -97,7 +97,7 @@ pipeline {
                     }
                 }
             }
-        } */
+        }
 
         /* stage('SonarQube Analysis') {
             when {
@@ -121,7 +121,7 @@ pipeline {
             }
         } */
 
-        /* stage('Build Image') {
+        stage('Build Image') {
             when {
                 anyOf {
                     branch "staging"
@@ -226,6 +226,6 @@ pipeline {
             }
         } 
         
-        */
+       
     }
 }
