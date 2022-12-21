@@ -170,7 +170,7 @@ pipeline {
                     sh "mv ./infra/terraform/docker-compose/app/docker-compose.yml ./infra/terraform/codedeploy_scripts/docker-compose.yml"
 
 
-                    if (env.CHANGE_TARGET == "staging") {
+                    if (env.BRANCH_NAME == "staging") { // env.CHANGE_TARGET == "staging" ||
                         sh 'aws deploy push \
                             --application-name simple-web_staging \
                             --description "This is a revision for the application simple-web_staging" \
