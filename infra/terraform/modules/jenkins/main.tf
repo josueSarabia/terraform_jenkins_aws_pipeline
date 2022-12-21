@@ -156,6 +156,14 @@ resource "aws_security_group" "prometheus_sg_public_subnet" {
   }
 
   ingress {
+    description = "Allow access to prometheus from my computer"
+    from_port = "9090"
+    to_port = "9090"
+    protocol = "tcp"
+    cidr_blocks = ["${var.my_ip}/32"]
+  }
+
+  ingress {
     description = "Allow SSH from my computer"
     from_port = "22"
     to_port = "22"
@@ -393,6 +401,38 @@ resource "aws_instance" "jenkins_worker_server" {
 }
 */
 
+data "aws_iam_policy" "aws_ec2_read_only_policy" {
+  name = "AmazonEC2ReadOnlyAccess"
+}
+
+resource "aws_iam_role" "ec2_prometheus_instance_role" {
+  name = "ec2_prometheus_instance_role_demo"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+}
+
+resource "aws_iam_role_policy_attachment" "codeDeploy_role_policy_attachment" {
+  policy_arn = data.aws_iam_policy.aws_ec2_read_only_policy.arn
+  role       = aws_iam_role.ec2_prometheus_instance_role.name
+}
+
+resource "aws_iam_instance_profile" "ec2_prometheus_instance_profile" {
+   name = "EC2PrometheusInstanceProfile"
+   role = aws_iam_role.ec2_prometheus_instance_role.name
+}
+
 resource "aws_instance" "prometheus_server" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t2.micro"
@@ -400,6 +440,7 @@ resource "aws_instance" "prometheus_server" {
   vpc_security_group_ids = [aws_security_group.prometheus_sg_public_subnet.id]
   associate_public_ip_address = true
   key_name = "devops"
+  iam_instance_profile = aws_iam_instance_profile.ec2_prometheus_instance_profile.id
 
   user_data = <<-EOF
       #!/bin/bash
