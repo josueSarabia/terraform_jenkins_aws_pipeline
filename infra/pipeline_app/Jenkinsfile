@@ -93,7 +93,7 @@ pipeline {
                 }
                 failure {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down --rmi all'
+                        sh 'docker compose -f ./app/docker-compose.yml down --rmi all' 
                     }
                 }
             }
