@@ -445,7 +445,7 @@ resource "aws_instance" "prometheus_server" {
   user_data = <<-EOF
       #!/bin/bash
       USER_HOME="/home/ubuntu"
-      ARTIFACT_NAME="docker-compose/monitoring"
+      ARTIFACT_NAME="monitoring"
 
       sudo apt-get update
       sudo DEBIAN_FRONTEND=noninteractive apt-get --yes --force-yes install \
@@ -483,9 +483,9 @@ resource "aws_instance" "prometheus_server" {
 
       aws s3 cp s3://${var.bucket_name}/$ARTIFACT_NAME.tar.gz $USER_HOME/$ARTIFACT_NAME.tar.gz --profile jenkins
       tar -xf $USER_HOME/$ARTIFACT_NAME.tar.gz -C $USER_HOME/
-      sudo chown -R ubuntu:ubuntu $USER_HOME/$ARTIFACT_NAME
+      sudo chown -R ubuntu:ubuntu $USER_HOME/docker-compose/$ARTIFACT_NAME
 
-      docker compose -f ./$ARTIFACT_NAME/prometheus/docker-compose.yml up -d
+      docker compose -f ./docker-compose/$ARTIFACT_NAME/prometheus/docker-compose.yml up -d
 
 
   EOF
