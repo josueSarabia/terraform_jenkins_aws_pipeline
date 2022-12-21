@@ -88,12 +88,12 @@ pipeline {
             post {
                 success {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down --rmi'
+                        sh 'docker compose -f ./app/docker-compose.yml down --rmi all'
                     }
                 }
                 failure {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down --rmi'
+                        sh 'docker compose -f ./app/docker-compose.yml down --rmi all' 
                     }
                 }
             }
