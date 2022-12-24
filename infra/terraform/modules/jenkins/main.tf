@@ -96,6 +96,14 @@ resource "aws_security_group" "jenkins_worker_server_sg" {
       cidr_blocks = ["${aws_instance.jenkins_server.public_ip}/32"]
    }
 
+   ingress {
+      description = "Allow SSH from my computer"
+      from_port = "22"
+      to_port = "22"
+      protocol = "tcp"
+      cidr_blocks = ["${var.my_ip}/32"]
+   }
+
    egress {
       description = "Allow all outbound traffic"
       from_port = "0"
