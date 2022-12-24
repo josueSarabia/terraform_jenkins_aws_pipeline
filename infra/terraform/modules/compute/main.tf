@@ -56,6 +56,8 @@ resource "aws_instance" "web_server" {
   sudo systemctl list-units --type=service | grep codedeploy
   sudo service codedeploy-agent status
 
+  cd $USER_HOME
+
   apt install unzip
 
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -119,6 +121,8 @@ resource "aws_instance" "web_server_staging" {
   sudo dpkg -i codedeploy-agent_1.3.2-1902_ubuntu22.deb
   sudo systemctl list-units --type=service | grep codedeploy
   sudo service codedeploy-agent status
+
+  cd $USER_HOME
 
   apt install unzip
 
