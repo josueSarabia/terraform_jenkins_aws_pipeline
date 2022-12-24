@@ -65,8 +65,8 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker compose -f ./app/docker-compose.yml rm -f'
-                    sh 'docker compose -f ./app/docker-compose.yml up -d backend'
+                    sh "docker compose -f ./app/backend/docker-compose.yml rm -f"
+                    sh "docker compose -f ./app/backend/docker-compose.yml up -d backend"
                 }
             }
         }
@@ -88,12 +88,12 @@ pipeline {
             post {
                 success {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down --rmi all'
+                        sh 'docker compose -f ./app/backend/docker-compose.yml down --rmi all'
                     }
                 }
                 failure {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down --rmi all' 
+                        sh 'docker compose -f ./app/backend/docker-compose.yml down --rmi all' 
                     }
                 }
             }
