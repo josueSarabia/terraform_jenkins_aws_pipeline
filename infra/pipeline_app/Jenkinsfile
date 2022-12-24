@@ -89,14 +89,14 @@ pipeline {
             post {
                 success {
                     script {
-                        sh 'docker network rm frontend_default'
                         sh 'docker compose -f ./app/backend/docker-compose.yml down --rmi all'
+                        sh 'docker network rm frontend_default'
                     }
                 }
                 failure {
                     script {
-                        sh 'docker network rm frontend_default'
                         sh 'docker compose -f ./app/backend/docker-compose.yml down --rmi all' 
+                        sh 'docker network rm frontend_default'
                     }
                 }
             }
