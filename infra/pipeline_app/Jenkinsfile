@@ -72,7 +72,7 @@ pipeline {
             }
         }
 
-        stage('Run Unit Tests') {
+        stage('Run Unit Tests') { 
             when {
                 anyOf {
                     branch "staging"
