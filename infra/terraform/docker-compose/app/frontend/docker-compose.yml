@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  frontend:
+    image: REPO_URL:COMMIT
+    container_name: frontend
+    ports:
+      - "80:80"

@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  backend:
+    image: REPO_URL:COMMIT
+    container_name: backend
+    networks:
+      - frontend_default
+    ports:
+      - "8081:8081"
+networks:
+  frontend_default:
+    external: true

@@ -163,20 +163,18 @@ pipeline {
             }
             steps {
                 script {
-                    if (env.FEATURE == "frontend") {
-                        sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL_FRONTEND ${ECR_REPO_URL_FRONTEND} ./infra/terraform/docker-compose/app/docker-compose.yml"
-                        sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT_FRONTEND ${GIT_COMMIT} ./infra/terraform/docker-compose/app/docker-compose.yml"
-                    } else { // backend
-                        sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL_BACKEND ${ECR_REPO_URL_BACKEND} ./infra/terraform/docker-compose/app/docker-compose.yml"
-                        sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT_BACKEND ${GIT_COMMIT} ./infra/terraform/docker-compose/app/docker-compose.yml"
-                    }
-                    
-                    
-                    
 
+                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/docker-compose/app/${FEATURE}/docker-compose.yml"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/docker-compose/app/${FEATURE}/docker-compose.yml"
+                   
                     sh "bash ./infra/terraform/scripts/replace_string.sh ECR_REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
-                    sh "mv ./infra/terraform/docker-compose/app/docker-compose.yml ./infra/terraform/codedeploy_scripts/docker-compose.yml"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh FEATURE ${FEATURE} ./infra/terraform/codedeploy_scripts/start_container.sh"
 
+                    sh "bash ./infra/terraform/scripts/replace_string.sh FEATURE ${FEATURE} ./infra/terraform/codedeploy_scripts/stop_old_container.sh"
+                    
+                    
+                    sh "mkdir -p ./infra/terraform/codedeploy_scripts/docker-compose/app/${FEATURE}/"
+                    sh "mv ./infra/terraform/docker-compose/app/${FEATURE}/docker-compose.yml ./infra/terraform/codedeploy_scripts/docker-compose/app/${FEATURE}/docker-compose.yml"
 
                     if (env.BRANCH_NAME == "staging") { // env.CHANGE_TARGET == "staging" ||
                         sh 'aws deploy push \
