@@ -54,7 +54,7 @@ pipeline {
             }
         }
 
-        /* stage('Start Container for Testing') {
+        stage('Start Container for Testing') {
             when {
                 anyOf {
                     branch "staging"
@@ -100,7 +100,7 @@ pipeline {
                     }
                 }
             }
-        } */
+        }
 
         stage('SonarQube Analysis') {
             when {
@@ -138,7 +138,7 @@ pipeline {
             }
         }
 
-        /* stage('Push to Registry') {
+        stage('Push to Registry') {
             // when {
             //    branch "DS-*"
             // }
@@ -233,7 +233,7 @@ pipeline {
                         --profile jenkins'
                 }
             }
-        }  */
+        } 
         
        
     }
