@@ -3,7 +3,7 @@
 service=FEATURE
 
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ECR_REPO_URL
-if [[ service = "backend" ]]; then
+if [[ $service = backend ]]; then
     docker network create "frontend_default" || true
 fi
 docker compose -f ~/docker-compose/app/$service/docker-compose.yml up -d
