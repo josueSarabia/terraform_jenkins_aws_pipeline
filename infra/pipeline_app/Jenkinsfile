@@ -165,7 +165,7 @@ pipeline {
                 }
             }
             steps {
-                script {
+                script { 
 
                     sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/docker-compose/app/${FEATURE}/docker-compose.yml"
                     sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/docker-compose/app/${FEATURE}/docker-compose.yml"
