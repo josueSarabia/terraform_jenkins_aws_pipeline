@@ -6,5 +6,11 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 if [[ service = "backend" ]]; then
     docker network create frontend_default || true
 fi
-sudo ls
+sudo ls > /home/ubuntu/mylogs.txt
+echo -------------- >> /home/ubuntu/mylogs.txt
+sudo ls docker-compose/ >> /home/ubuntu/mylogs.txt
+echo -------------- >> /home/ubuntu/mylogs.txt
+sudo ls docker-compose/app/ >> /home/ubuntu/mylogs.txt
+echo -------------- >> /home/ubuntu/mylogs.txt
+sudo ls docker-compose/app/$service/ >> /home/ubuntu/mylogs.txt
 docker compose -f ./docker-compose/app/$service/docker-compose.yml up -d
