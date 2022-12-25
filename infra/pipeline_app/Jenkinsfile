@@ -65,13 +65,14 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker compose -f ./app/docker-compose.yml rm -f'
-                    sh 'docker compose -f ./app/docker-compose.yml up -d backend'
+                    sh "docker compose -f ./app/backend/docker-compose.yml rm -f"
+                    sh "docker network create frontend_default"
+                    sh "docker compose -f ./app/backend/docker-compose.yml up -d backend"
                 }
             }
         }
 
-        stage('Run Unit Tests') {
+        stage('Run Unit Tests') { 
             when {
                 anyOf {
                     branch "staging"
@@ -88,12 +89,14 @@ pipeline {
             post {
                 success {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down --rmi all'
+                        sh 'docker compose -f ./app/backend/docker-compose.yml down --rmi all'
+                        sh 'docker network rm frontend_default'
                     }
                 }
                 failure {
                     script {
-                        sh 'docker compose -f ./app/docker-compose.yml down --rmi all' 
+                        sh 'docker compose -f ./app/backend/docker-compose.yml down --rmi all' 
+                        sh 'docker network rm frontend_default'
                     }
                 }
             }
@@ -162,14 +165,19 @@ pipeline {
                 }
             }
             steps {
-                script {
-                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL_FRONTEND ${ECR_REPO_URL_FRONTEND} ./infra/terraform/docker-compose/app/docker-compose.yml"
-                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL_BACKEND ${ECR_REPO_URL_BACKEND} ./infra/terraform/docker-compose/app/docker-compose.yml"
-                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/docker-compose/app/docker-compose.yml"
+                script { 
 
+                    sh "bash ./infra/terraform/scripts/replace_string.sh REPO_URL ${ECR_REPO_URL} ./infra/terraform/docker-compose/app/${FEATURE}/docker-compose.yml"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh COMMIT ${GIT_COMMIT} ./infra/terraform/docker-compose/app/${FEATURE}/docker-compose.yml"
+                   
                     sh "bash ./infra/terraform/scripts/replace_string.sh ECR_REPO_URL ${ECR_REPO_URL} ./infra/terraform/codedeploy_scripts/start_container.sh"
-                    sh "mv ./infra/terraform/docker-compose/app/docker-compose.yml ./infra/terraform/codedeploy_scripts/docker-compose.yml"
+                    sh "bash ./infra/terraform/scripts/replace_string.sh FEATURE ${FEATURE} ./infra/terraform/codedeploy_scripts/start_container.sh"
 
+                    sh "bash ./infra/terraform/scripts/replace_string.sh FEATURE ${FEATURE} ./infra/terraform/codedeploy_scripts/stop_old_container.sh"
+                    
+                    
+                    sh "mkdir -p ./infra/terraform/codedeploy_scripts/docker-compose/app/${FEATURE}/"
+                    sh "mv ./infra/terraform/docker-compose/app/${FEATURE}/docker-compose.yml ./infra/terraform/codedeploy_scripts/docker-compose/app/${FEATURE}/docker-compose.yml"
 
                     if (env.BRANCH_NAME == "staging") { // env.CHANGE_TARGET == "staging" ||
                         sh 'aws deploy push \

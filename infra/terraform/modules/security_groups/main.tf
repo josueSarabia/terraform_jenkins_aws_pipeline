@@ -46,6 +46,22 @@ resource "aws_security_group" "ec2_sg_public_subnet" {
   }
 
   ingress {
+    description = "Allow connection from prometheus server"
+    from_port = "9101"
+    to_port = "9101"
+    protocol = "tcp"
+    security_groups = [var.prometheus_sg_id]
+  }
+
+  ingress {
+    description = "Allow connection from prometheus server"
+    from_port = "8081"
+    to_port = "8081"
+    protocol = "tcp"
+    security_groups = [var.prometheus_sg_id]
+  }
+
+  ingress {
     description = "Allow SSH from my computer"
     from_port = "22"
     to_port = "22"
@@ -83,6 +99,22 @@ resource "aws_security_group" "ec2_staging_sg_public_subnet" {
     description = "Allow connection from prometheus server"
     from_port = "9100"
     to_port = "9100"
+    protocol = "tcp"
+    security_groups = [var.prometheus_sg_id]
+  }
+
+  ingress {
+    description = "Allow connection from prometheus server"
+    from_port = "9101"
+    to_port = "9101"
+    protocol = "tcp"
+    security_groups = [var.prometheus_sg_id]
+  }
+
+  ingress {
+    description = "Allow connection from prometheus server"
+    from_port = "8081"
+    to_port = "8081"
     protocol = "tcp"
     security_groups = [var.prometheus_sg_id]
   }
