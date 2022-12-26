@@ -127,7 +127,7 @@ resource "aws_security_group" "sonar_server_sg" {
       from_port = "9000"
       to_port = "9000"
       protocol = "tcp"
-      cidr_blocks = ["${aws_instance.jenkins_worker_server.public_ip}/32", "${var.my_ip}/32"]
+      cidr_blocks = ["${aws_instance.jenkins_server.public_ip}/32", "${aws_instance.jenkins_worker_server.public_ip}/32", "${var.my_ip}/32"]
    }
 
    ingress {
@@ -326,6 +326,9 @@ resource "aws_instance" "jenkins_worker_server" {
 
    sudo apt update -y
    sudo apt install openjdk-11-jre -y
+
+   sudo apt install nodejs -y
+   sudo apt install npm -y
   EOF
 
   tags = {
@@ -333,7 +336,7 @@ resource "aws_instance" "jenkins_worker_server" {
   }
 }
 
-/* resource "aws_instance" "sonar_server" {
+resource "aws_instance" "sonar_server" {
   ami = data.aws_ami.ubuntu.id
   
   subnet_id =  var.subnet_id
@@ -407,7 +410,7 @@ resource "aws_instance" "jenkins_worker_server" {
    Name = "sonar_server"
   }
 }
-*/
+
 
 data "aws_iam_policy" "aws_ec2_read_only_policy" {
   name = "AmazonEC2ReadOnlyAccess"

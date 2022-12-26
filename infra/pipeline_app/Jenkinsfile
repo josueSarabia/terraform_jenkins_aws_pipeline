@@ -1,11 +1,11 @@
-/* def qualityGateValidation(qg) {
+def qualityGateValidation(qg) {
     if (qg.status != 'OK') {
         error "Pipeline aborted due to quality gate failure: ${qg.status}"
         return true
     }
 
     return false
-} */
+}
 
 pipeline {
     environment {
@@ -102,7 +102,7 @@ pipeline {
             }
         }
 
-        /* stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             when {
                 anyOf {
                     branch "staging"
@@ -122,7 +122,7 @@ pipeline {
                     waitForQualityGate abortPipeline: qualityGateValidation(waitForQualityGate())
                 }
             }
-        } */
+        }
 
         stage('Build Image') {
             when {

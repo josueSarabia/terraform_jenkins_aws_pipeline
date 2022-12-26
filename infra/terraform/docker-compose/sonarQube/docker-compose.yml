@@ -29,3 +29,6 @@ services:
 #  sonarqube_logs:
 #  postgresql:
 #  postgresql_data:
+
+# run on windows locally
+# docker run --rm --network host -e SONAR_HOST_URL="http://localhost:9000"  -e SONAR_LOGIN="my_token" -v "my_windows_dir:/usr/src" sonarsource/sonar-scanner-cli
