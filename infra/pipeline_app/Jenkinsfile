@@ -46,7 +46,7 @@ pipeline {
                             ECR_REPO_URL = ECR_REPO_URL_BACKEND
                             FEATURE = "backend"
                         }
-                    } catch (err) {
+                    } catch (err) { 
                         echo "No feature was included in the commit. Please add [name-of-feature] in the commit"
                         currentBuild.result = 'FAILURE'
                     }
