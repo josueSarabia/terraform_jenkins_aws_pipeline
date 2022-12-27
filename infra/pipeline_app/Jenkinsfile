@@ -15,7 +15,7 @@ pipeline {
 
     agent { label "jenkins-worker"}
     /* agent any */
-    stages {
+    stages { 
 
         stage('Validate Commit') {
             when {
